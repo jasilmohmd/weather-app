@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState } from 'react'
-import { MdMyLocation, MdOutlineLocationOn, MdWbSunny } from "react-icons/md";
 import Searchbox from './Searchbox';
 import axios from 'axios';
 import { useAtom } from 'jotai';

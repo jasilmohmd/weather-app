@@ -1,9 +1,6 @@
-import { cn } from '@/utils/cn';
+
 import React from 'react'
-import { FiDroplet } from 'react-icons/fi';
-import { ImMeter } from 'react-icons/im';
-import { ChevronDown, MapPin, RefreshCw, Eye, Droplets, Wind, Gauge, Sunrise, Sunset } from 'lucide-react';
-import { MdAir } from 'react-icons/md';
+import { Eye, Droplets, Wind, Gauge, Sunrise, Sunset } from 'lucide-react';
 import Container from './Container';
 
 type Props = {}
@@ -15,7 +12,6 @@ export interface WeatherDetailProps {
   airPressure: string;
   sunrise: string;
   sunset: string;
-  compact?: boolean;
 }
 
 export default function WeatherDetails(props: WeatherDetailProps) {
@@ -27,7 +23,6 @@ export default function WeatherDetails(props: WeatherDetailProps) {
     airPressure = "0 hPa",
     sunrise = "0:00",
     sunset = "0:00",
-    compact
   } = props
   
   return (
@@ -36,41 +31,41 @@ export default function WeatherDetails(props: WeatherDetailProps) {
       <SingleWeatherDetail
         icon={Eye}
         label='Visibility'
-        value={props.visibility}
+        value={visibility}
         unit='km'
       />
 
       <SingleWeatherDetail
         icon={Droplets}
         label='Humidity'
-        value={props.humidity}
+        value={humidity}
         unit='%'
       />
 
       <SingleWeatherDetail
         icon={Wind}
         label='WindSpeed'
-        value={props.windSpeed}
+        value={windSpeed}
         unit='km/h'
       />
 
       <SingleWeatherDetail
         icon={Gauge}
         label='Pressure'
-        value={props.airPressure}
+        value={airPressure}
         unit='hPa'
       />
 
       <SingleWeatherDetail
         icon={Sunrise}
         label='Sunrise'
-        value={props.sunrise}
+        value={sunrise}
       />
 
       <SingleWeatherDetail
         icon={Sunset}
         label='Sunset'
-        value={props.sunset}
+        value={sunset}
       />
 
     </>

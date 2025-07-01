@@ -19,7 +19,7 @@ export default function Footer() {
                 Powered by OpenWeatherMap API
               </p>
               <p className="text-white/30 text-xs font-light">
-                Made with ❤️ for weather enthusiasts
+                Made with 🤍 for weather enthusiasts
               </p>
             </div>
           </div>

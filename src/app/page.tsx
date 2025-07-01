@@ -12,10 +12,9 @@ import { convertSpeed } from "@/utils/speedInMpsToKmph";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { format, fromUnixTime, parseISO } from 'date-fns';
-import Image from "next/image";
 import { isCelsiusAtom, loadingCityAtom, placeAtom } from "./atom";
 import { useAtom } from "jotai";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import React from 'react';
 import Footer from "@/components/Footer";
 
