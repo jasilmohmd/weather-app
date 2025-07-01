@@ -17,6 +17,7 @@ import { useAtom } from "jotai";
 import { useEffect } from "react";
 import React from 'react';
 import Footer from "@/components/Footer";
+import { safeFormat, safeFormatUnix } from "@/utils/safeFormat";
 
 // https://api.openweathermap.org/data/2.5/forecast?q=pune&appid=7caaebc1b01f226342be04bbee229a65&cnt=2
 
@@ -221,8 +222,8 @@ export default function Home() {
                   airPressure={`${firstdata?.main.pressure}`}
                   humidity={`${firstdata?.main.humidity}`}
                   windSpeed={convertSpeed(firstdata?.wind.speed ?? 0)}
-                  sunrise={format(fromUnixTime(data.city.sunrise), "h:mm a")}
-                  sunset={format(fromUnixTime(data.city.sunset), "h:mm a")}
+                  sunrise={safeFormatUnix(data.city.sunrise, "h:mm a")}
+                  sunset={safeFormatUnix(data.city.sunrise, "h:mm a")}
                 />
 
 
@@ -269,11 +270,10 @@ export default function Home() {
                   {firstDataForEachDate.map((d, i, ar) => (
                     <React.Fragment key={i}>
                       <ForecastWeatherDetails
-                        // key={i}
                         description={d?.weather[0].description ?? ""}
                         weatherIcon={d?.weather[0].icon ?? "01d"}
-                        date={format(parseISO(d?.dt_txt ?? ""), "dd MMM")}
-                        day={format(parseISO(d?.dt_txt ?? ""), "EEEE")}
+                        date={safeFormat(d?.dt_txt , "dd MMM")}
+                        day={safeFormat(d?.dt_txt , "EEEE")}
                         feels_like={d?.main.feels_like ?? 0}
                         temp={d?.main.temp ?? 0}
                         temp_min={d?.main.temp_min ?? 0}
@@ -282,8 +282,8 @@ export default function Home() {
                         airPressure={`${d?.main.pressure}`}
                         humidity={`${d?.main.humidity}`}
                         windSpeed={convertSpeed(d?.wind.speed ?? 0)}
-                        sunrise={format(fromUnixTime(data.city.sunrise), "h:mm a")}
-                        sunset={format(fromUnixTime(data.city.sunset), "h:mm a")}
+                        sunrise={safeFormatUnix(data.city.sunrise, "h:mm a")}
+                        sunset={safeFormatUnix(data.city.sunrise, "h:mm a")}
                         isCelsius={isCelsius}
                       />
                       {i < ar.length - 1 && <hr className="border-white/20" />}
