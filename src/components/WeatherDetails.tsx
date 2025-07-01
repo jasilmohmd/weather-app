@@ -3,8 +3,6 @@ import React from 'react'
 import { Eye, Droplets, Wind, Gauge, Sunrise, Sunset } from 'lucide-react';
 import Container from './Container';
 
-type Props = {}
-
 export interface WeatherDetailProps {
   visibility: string;
   humidity: string;

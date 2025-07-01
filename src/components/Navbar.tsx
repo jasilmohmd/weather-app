@@ -7,8 +7,9 @@ import { useAtom } from 'jotai';
 import { isCelsiusAtom, loadingCityAtom, placeAtom } from '@/app/atom';
 import { MapPin } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
+import { City, WeatherEntry } from '@/app/page';
 
-type Props = { location?: string, data: any }
+type Props = { location?: string, data?: WeatherEntry }
 
 export default function Navbar({ location, data }: Props) {
 
@@ -20,8 +21,8 @@ export default function Navbar({ location, data }: Props) {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestion] = useState(false);
   //
-  const [place, setPlace] = useAtom(placeAtom);
-  const [loadingCity, setLoadingCity] = useAtom(loadingCityAtom);
+  const [, setPlace] = useAtom(placeAtom);
+  const [, setLoadingCity] = useAtom(loadingCityAtom);
   const [isCelsius, setIsCelsius] = useAtom(isCelsiusAtom);
 
 
@@ -34,12 +35,19 @@ export default function Navbar({ location, data }: Props) {
           `https://api.openweathermap.org/data/2.5/find?q=${value}&appid=${API_KEY}`
         );
 
-        const suggestions = response.data.list.map((item: any) => item.name);
+        const suggestions = response.data.list.map((item: City) => item.name);
         setSuggestions(suggestions);
         setError("");
         setShowSuggestion(true);
 
-      } catch (error) {
+      } catch (error:unknown) {
+        if (axios.isAxiosError(error) && error.response) {
+          setError(error.response.data?.message || "Failed to fetch suggestions.");
+        } else if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError("An unexpected error occurred.");
+        }
         setSuggestions([]);
         setShowSuggestion(false);
       }

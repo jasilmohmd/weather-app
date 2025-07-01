@@ -92,10 +92,10 @@ export interface Coordinates {
 
 export default function Home() {
 
-  const [isCelsius, setIsCelsius] = useAtom(isCelsiusAtom);
+  const [isCelsius] = useAtom(isCelsiusAtom);
 
-  const [place, setPlace] = useAtom(placeAtom);
-  const [loadingCity, setLoadingCity] = useAtom(loadingCityAtom);
+  const [place] = useAtom(placeAtom);
+  const [loadingCity] = useAtom(loadingCityAtom);
 
   const { isPending, error, data, refetch } = useQuery<WeatherResponse>({
     queryKey: ['repoData'],
@@ -156,7 +156,7 @@ export default function Home() {
 
 
 
-      <Navbar location={data.city.name} data={firstdata} />
+      <Navbar location={data.city.name} data={firstdata } />
 
       <main className="px-3 max-w-7xl mx-auto flex flex-col gap-6 w-full pb-10 pt-4">
 

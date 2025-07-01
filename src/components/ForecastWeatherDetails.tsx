@@ -49,6 +49,9 @@ export default function ForecastWeatherDetails(props: ForecastWeatherDetailsProp
         <div className="text-center sm:text-left">
           <WeatherIcon iconname={weatherIcon} className="w-12 h-12 mx-auto sm:mx-0" />
           <p className="capitalize text-white/80 font-light min-w-[80px]">{description}</p>
+          <p className='text-xs text-white/50'>Feels like {isCelsius
+            ? convertKtoC(feels_like ?? 273.15)
+            : convertKtoF(feels_like ?? 273.15)}°</p>
           <p className="flex gap-2 text-xs text-white/50 justify-center sm:justify-start">
             <span>
               H: {isCelsius ? convertKtoC(temp_max) : convertKtoF(temp_max)}°
