@@ -11,7 +11,7 @@ import { metersToKilometers } from "@/utils/metersToKilometers";
 import { convertSpeed } from "@/utils/speedInMpsToKmph";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { format, fromUnixTime, parseISO } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { isCelsiusAtom, loadingCityAtom, placeAtom } from "./atom";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
