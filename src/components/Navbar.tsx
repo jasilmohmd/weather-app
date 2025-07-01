@@ -201,7 +201,7 @@ function SuggestionBox({
   return (
     <>
       {((showSuggestions && suggestions.length > 1) || error) && (
-        <ul className='mb-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl text-white absolute top-[50px] left-0 min-w-[200px] flex flex-col gap-1 p-1'>
+        <ul className='mb-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl text-white absolute top-[50px] left-0 min-w-[200px] flex flex-col gap-1 p-1 z-50'>
           {error && suggestions.length < 1 && (
             <li className='text-red-500 p-1'>{error}</li>
           )}
