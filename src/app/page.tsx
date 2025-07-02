@@ -105,8 +105,6 @@ export default function Home() {
         `https://api.openweathermap.org/data/2.5/forecast?q=${place}&appid=${process.env.NEXT_PUBLIC_WEATHER_KEY}&cnt=56`
       )
 
-      console.log(data)
-
       return data;
     }
   })
@@ -116,7 +114,6 @@ export default function Home() {
   }, [place, refetch])
 
   const firstdata = data?.list[0];
-  // console.log(firstdata);
 
 
 
@@ -157,7 +154,7 @@ export default function Home() {
 
 
 
-      <Navbar location={data.city.name} data={firstdata } />
+      <Navbar location={data.city.name} data={firstdata} />
 
       <main className="px-3 max-w-7xl mx-auto flex flex-col gap-6 w-full pb-10 pt-4">
 
@@ -265,9 +262,9 @@ export default function Home() {
             {/* 7 day forecast */}
             <section className="flex w-full flex-col gap-4">
               <Container className='p-6'>
-                <h2 className="text-white/90 font-light text-xl mb-4 tracking-wide">7-Day Forecast</h2>
+                <h2 className="text-white/90 font-light text-xl mb-4 tracking-wide">5-Day Forecast</h2>
                 <div className="grid grid-cols-1 gap-6 p-2 pb-6">
-                  {firstDataForEachDate.map((d, i, ar) => (
+                  {firstDataForEachDate.slice(1,6).map((d, i, ar) => (
                     <React.Fragment key={i}>
                       <ForecastWeatherDetails
                         description={d?.weather[0].description ?? ""}
