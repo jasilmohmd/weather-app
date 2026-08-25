@@ -11,6 +11,7 @@ import { City, WeatherEntry } from '@/types/weather';
 import { findCities, getForecastByCoords } from '@/services/weatherApi';
 import { MAX_SAVED_PLACES, pushRecent, removePlace } from '@/utils/recentSearches';
 import { Theme, themeAtom } from '@/app/atom';
+import { useI18n } from '@/hooks/useI18n';
 
 type Props = { location?: string; data?: WeatherEntry };
 
@@ -29,6 +30,7 @@ export default function Navbar({ location, data }: Props) {
   const [recentSearches, setRecentSearches] = useAtom(recentSearchesAtom);
   const [isCelsius, setIsCelsius] = useAtom(isCelsiusAtom);
   const [theme, setTheme] = useAtom(themeAtom);
+  const { locale, toggleLocale, nextLocaleLabel, t, dateLocale } = useI18n();
 
   const nextTheme: Theme = theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light';
 
@@ -133,7 +135,7 @@ export default function Navbar({ location, data }: Props) {
     e.preventDefault();
 
     if (suggestions.length < 1) {
-      setError('Location not found');
+      setError(t.nav.locationNotFound);
     } else {
       setError('');
       selectPlace(city);
@@ -173,8 +175,8 @@ export default function Navbar({ location, data }: Props) {
             <button
               className="p-2 hover:bg-white/10 rounded-full transition-colors duration-200"
               onClick={handleCurrentLocation}
-              aria-label="Use my current location"
-              title="Your Current Location"
+              aria-label={t.nav.currentLocationAria}
+              title={t.nav.currentLocationTitle}
             >
               <MapPin className="w-6 h-6 text-white/80" />
             </button>
@@ -182,14 +184,14 @@ export default function Navbar({ location, data }: Props) {
             <div className="text-center">
               <h1 className="text-white font-light text-lg tracking-wide">{location}</h1>
               <p className="text-white/60 text-sm font-light">
-                {format(parseISO(data?.dt_txt ?? ''), 'EEEE')},{' '}
-                {format(parseISO(data?.dt_txt ?? ''), 'MMMM dd')}
+                {format(parseISO(data?.dt_txt ?? ''), 'EEEE', { locale: dateLocale })},{' '}
+                {format(parseISO(data?.dt_txt ?? ''), 'MMMM dd', { locale: dateLocale })}
               </p>
             </div>
             <button
               onClick={() => setIsCelsius(!isCelsius)}
-              aria-label={`Switch to degrees ${isCelsius ? 'Fahrenheit' : 'Celsius'}`}
-              title={`Switch to °${isCelsius ? 'F' : 'C'}`}
+              aria-label={isCelsius ? t.nav.switchToFahrenheit : t.nav.switchToCelsius}
+              title={`°${isCelsius ? 'F' : 'C'}`}
               className="text-white/80 font-light text-sm px-2 py-1 hover:bg-white/10 rounded-full transition-colors duration-200"
             >
               °{isCelsius ? 'C' : 'F'}
@@ -198,8 +200,8 @@ export default function Navbar({ location, data }: Props) {
             <button
               onClick={togglePin}
               disabled={!location}
-              aria-label={isPinned ? 'Unpin current city' : 'Pin current city'}
-              title={isPinned ? 'Unpin current city' : 'Pin current city'}
+              aria-label={isPinned ? t.nav.unpinCity : t.nav.pinCity}
+              title={isPinned ? t.nav.unpinCity : t.nav.pinCity}
               className="p-2 hover:bg-white/10 rounded-full transition-colors duration-200 disabled:opacity-40"
             >
               <Star className="w-5 h-5 text-white/80" fill={isPinned ? 'currentColor' : 'none'} />
@@ -219,10 +221,19 @@ export default function Navbar({ location, data }: Props) {
                 <Monitor className="w-5 h-5 text-white/80" />
               )}
             </button>
+
+            <button
+              onClick={toggleLocale}
+              aria-label={t.nav.languageAria(nextLocaleLabel)}
+              title={nextLocaleLabel}
+              className="p-2 hover:bg-white/10 rounded-full transition-colors duration-200 text-white/80 font-light text-sm"
+            >
+              {locale === 'en' ? 'ع' : 'EN'}
+            </button>
           </div>
 
           {/*  */}
-          <section className="ml-auto flex gap-2 items-center">
+          <section className="ms-auto flex gap-2 items-center">
             <div className="relative hidden md:flex" onKeyDown={handleSearchKeyDown}>
               {/* Search box */}
               <Searchbox
@@ -280,13 +291,15 @@ function SuggestionBox({
   error: string;
   activeIndex: number;
 }) {
+  const { t } = useI18n();
+
   return (
     <>
       {((showSuggestions && suggestions.length >= 1) || error) && (
         <ul
           role="listbox"
-          aria-label="City suggestions"
-          className="mb-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl text-white absolute top-[50px] left-0 min-w-[200px] flex flex-col gap-1 p-1 z-50"
+          aria-label={t.nav.citySuggestions}
+          className="mb-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl text-white absolute top-[50px] start-0 min-w-[200px] flex flex-col gap-1 p-1 z-50"
         >
           {error && suggestions.length < 1 && (
             <li role="alert" className="text-red-500 p-1">
@@ -298,7 +311,7 @@ function SuggestionBox({
               <button
                 type="button"
                 onClick={() => handleSuggestionClick(item)}
-                className={`w-full text-left cursor-pointer p-2 rounded-xl transition-colors ${
+                className={`w-full text-start cursor-pointer p-2 rounded-xl transition-colors ${
                   i === activeIndex ? 'bg-gray-200/20' : 'hover:bg-gray-200/20'
                 }`}
               >

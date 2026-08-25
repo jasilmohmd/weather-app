@@ -65,6 +65,13 @@ Follow these when writing any code in this repo. When existing code and this doc
 - Prettier 3 is the formatter: single quotes, semicolons, width 100, ES5 trailing commas (`.prettierrc`). Markdown/context docs are ignored — keep them hand-crafted.
 - Run `npm run format` before committing (or `npm run format:check` to verify). CI-style order per PR: `npm test && npm run lint && npm run build`.
 
+## i18n
+
+- **Every user-facing string goes through the dictionary** (`src/i18n/dictionaries.ts`). Add it to `en` AND `ar`; the parity test fails otherwise.
+- Parameterised strings are functions in the dict, not template literals at call sites.
+- Dates: pass `dateLocale` from `useI18n()` into `format`/`safeFormat`.
+- RTL: prefer logical utilities (`ms-/me-/ps-/pe-/start-/end-`, `text-start`) over physical ones in new markup.
+
 ## Error Handling
 
 - Network calls: try/catch; narrow with `axios.isAxiosError`; surface messages to UI — do NOT just `console.log`.

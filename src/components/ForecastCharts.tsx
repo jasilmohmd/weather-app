@@ -13,6 +13,7 @@ import {
   YAxis,
 } from 'recharts';
 import Container from './Container';
+import { useI18n } from '@/hooks/useI18n';
 import { convertKtoC, convertKtoF } from '@/utils/convertKelvinToCelsius';
 import { safeFormat } from '@/utils/safeFormat';
 import type { WeatherEntry } from '@/types/weather';
@@ -23,14 +24,15 @@ interface ForecastChartsProps {
 }
 
 export default function ForecastCharts({ list, isCelsius }: ForecastChartsProps) {
+  const { t, dateLocale } = useI18n();
   const points = useMemo(
     () =>
       (list ?? []).map((entry) => ({
-        time: safeFormat(entry.dt_txt, 'EEE h a'),
+        time: safeFormat(entry.dt_txt, 'EEE h a', dateLocale),
         temp: isCelsius ? convertKtoC(entry.main.temp) : convertKtoF(entry.main.temp),
         pop: Math.round((entry.pop ?? 0) * 100),
       })),
-    [list, isCelsius]
+    [list, isCelsius, dateLocale]
   );
 
   if (points.length === 0) return null;
@@ -45,7 +47,7 @@ export default function ForecastCharts({ list, isCelsius }: ForecastChartsProps)
 
   return (
     <Container className="p-6">
-      <h3 className="text-white/90 font-light text-xl mb-4 tracking-wide">Trends</h3>
+      <h3 className="text-white/90 font-light text-xl mb-4 tracking-wide">{t.charts.heading}</h3>
 
       <div className="h-52 w-full">
         <ResponsiveContainer width="100%" height="100%">
@@ -63,7 +65,7 @@ export default function ForecastCharts({ list, isCelsius }: ForecastChartsProps)
             <Line
               type="monotone"
               dataKey="temp"
-              name={`Temperature °${isCelsius ? 'C' : 'F'}`}
+              name={`${t.charts.temperature} °${isCelsius ? 'C' : 'F'}`}
               stroke="#ffffff"
               strokeWidth={2}
               dot={false}
@@ -99,7 +101,7 @@ export default function ForecastCharts({ list, isCelsius }: ForecastChartsProps)
             />
             <Bar
               dataKey="pop"
-              name="Precipitation chance"
+              name={t.charts.precipitation}
               fill="rgba(255,255,255,0.65)"
               radius={[4, 4, 0, 0]}
               isAnimationActive={false}

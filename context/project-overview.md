@@ -75,6 +75,7 @@ weather-app/
     │   ├── Footer.tsx            # static credits card
     │   ├── ForecastWeatherDetails.tsx  # one row of daily forecast + compact details grid
     │   ├── HourlyForecast.tsx          # first 24 slots, scroll-snap, weekday markers on day change
+    │   ├── LocaleSync.tsx              # mirrors localeAtom to <html lang/dir> (rtl for Arabic)
     │   ├── Navbar.tsx            # location/date, geolocation btn, unit toggle, pin-city star,
     │   │                         #    desktop+mobile Searchbox, internal SuggestionBox
     │   ├── PlacesBar.tsx         # saved + recent city chips (localStorage-persisted)
@@ -87,7 +88,11 @@ weather-app/
     │   └── WeatherSkeleton.tsx   # full-page loading skeleton
     ├── hooks/
     │   ├── useAqi.ts             # useQuery(["weather","aqi",lat,lon]) — enabled only with coords
+    │   ├── useI18n.ts            # { t, locale, toggleLocale, dateLocale, dir } from localeAtom
     │   └── useWeather.ts         # useQuery(["weather","forecast",place]) wrapper
+    ├── i18n/
+    │   ├── config.ts             # Locale type, localeAtom (persisted), switch labels
+    │   └── dictionaries.ts       # en source-of-truth + ar; Dict type inferred from en
     ├── lib/
     │   └── apiHelpers.ts         # shared route-handler helpers (badRequest/toNumber/handleOwmError)
     ├── services/

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Eye, Droplets, Wind, Gauge, Sunrise, Sunset } from 'lucide-react';
 import Container from './Container';
+import { useI18n } from '@/hooks/useI18n';
 
 export interface WeatherDetailProps {
   visibility: string;
@@ -21,19 +22,26 @@ export default function WeatherDetails(props: WeatherDetailProps) {
     sunset = '0:00',
   } = props;
 
+  const { t } = useI18n();
+
   return (
     <>
-      <SingleWeatherDetail icon={Eye} label="Visibility" value={visibility} unit="km" />
+      <SingleWeatherDetail icon={Eye} label={t.details.visibility} value={visibility} unit="km" />
 
-      <SingleWeatherDetail icon={Droplets} label="Humidity" value={humidity} unit="%" />
+      <SingleWeatherDetail icon={Droplets} label={t.details.humidity} value={humidity} unit="%" />
 
-      <SingleWeatherDetail icon={Wind} label="WindSpeed" value={windSpeed} unit="km/h" />
+      <SingleWeatherDetail
+        icon={Wind}
+        label={t.details.windSpeedShort}
+        value={windSpeed}
+        unit="km/h"
+      />
 
-      <SingleWeatherDetail icon={Gauge} label="Pressure" value={airPressure} unit="hPa" />
+      <SingleWeatherDetail icon={Gauge} label={t.details.pressure} value={airPressure} unit="hPa" />
 
-      <SingleWeatherDetail icon={Sunrise} label="Sunrise" value={sunrise} />
+      <SingleWeatherDetail icon={Sunrise} label={t.details.sunrise} value={sunrise} />
 
-      <SingleWeatherDetail icon={Sunset} label="Sunset" value={sunset} />
+      <SingleWeatherDetail icon={Sunset} label={t.details.sunset} value={sunset} />
     </>
   );
 }
@@ -55,7 +63,7 @@ function SingleWeatherDetail({ icon: Icon, label, value, unit }: SingleWeatherDe
         <p className="text-white/60 text-sm font-light tracking-wide">{label}</p>
         <p className="text-white font-medium text-lg">
           {value}
-          <span className="text-white/70 text-sm ml-1">{unit}</span>
+          <span className="text-white/70 text-sm ms-1">{unit}</span>
         </p>
       </div>
     </Container>
@@ -72,7 +80,7 @@ function CompactSingleWeatherDetail({ icon: Icon, label, value, unit }: SingleWe
         <p className="text-white/60 text-sm font-light tracking-wide">{label}</p>
         <p className="text-white font-medium text-lg">
           {value}
-          <span className="text-white/70 text-sm ml-0.5">{unit}</span>
+          <span className="text-white/70 text-sm ms-0.5">{unit}</span>
         </p>
       </div>
     </div>
@@ -87,12 +95,34 @@ export function CompactWeatherDetails(props: WeatherDetailProps) {
     airPressure = '0 hPa',
   } = props;
 
+  const { t } = useI18n();
+
   return (
     <div className="grid grid-cols-2  sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
-      <CompactSingleWeatherDetail icon={Eye} label="Visibility" value={visibility} unit="km" />
-      <CompactSingleWeatherDetail icon={Droplets} label="Humidity" value={humidity} unit="%" />
-      <CompactSingleWeatherDetail icon={Wind} label="Wind Speed" value={windSpeed} unit="km/h" />
-      <CompactSingleWeatherDetail icon={Gauge} label="Pressure" value={airPressure} unit="hPa" />
+      <CompactSingleWeatherDetail
+        icon={Eye}
+        label={t.details.visibility}
+        value={visibility}
+        unit="km"
+      />
+      <CompactSingleWeatherDetail
+        icon={Droplets}
+        label={t.details.humidity}
+        value={humidity}
+        unit="%"
+      />
+      <CompactSingleWeatherDetail
+        icon={Wind}
+        label={t.details.windSpeed}
+        value={windSpeed}
+        unit="km/h"
+      />
+      <CompactSingleWeatherDetail
+        icon={Gauge}
+        label={t.details.pressure}
+        value={airPressure}
+        unit="hPa"
+      />
     </div>
   );
 }

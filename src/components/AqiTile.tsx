@@ -1,15 +1,18 @@
 'use client';
 
 import { useAqi } from '@/hooks/useAqi';
+import { useI18n } from '@/hooks/useI18n';
 import Container from './Container';
 import type { AirPollutionEntry } from '@/types/weather';
 
-const AQI_LEVELS: Record<number, { label: string; dot: string }> = {
-  1: { label: 'Good', dot: 'bg-green-400' },
-  2: { label: 'Fair', dot: 'bg-yellow-300' },
-  3: { label: 'Moderate', dot: 'bg-orange-400' },
-  4: { label: 'Poor', dot: 'bg-red-500' },
-  5: { label: 'Very Poor', dot: 'bg-purple-500' },
+const AQI_LEVEL_KEYS = ['good', 'fair', 'moderate', 'poor', 'veryPoor'] as const;
+
+const AQI_DOTS: Record<number, string> = {
+  1: 'bg-green-400',
+  2: 'bg-yellow-300',
+  3: 'bg-orange-400',
+  4: 'bg-red-500',
+  5: 'bg-purple-500',
 };
 
 const POLLUTANT_LABELS: Record<string, string> = {
@@ -40,6 +43,7 @@ interface AqiTileProps {
 
 export default function AqiTile({ lat, lon }: AqiTileProps) {
   const { data, isPending } = useAqi(lat, lon);
+  const { t } = useI18n();
 
   if (typeof lat !== 'number' || typeof lon !== 'number') return null;
 
@@ -59,24 +63,27 @@ export default function AqiTile({ lat, lon }: AqiTileProps) {
   const entry = data?.list[0];
   if (!entry) return null;
 
-  const level = AQI_LEVELS[entry.main.aqi] ?? AQI_LEVELS[1];
+  const levelKey = t.aqiLevels[AQI_LEVEL_KEYS[entry.main.aqi - 1] ?? 'good'];
+  const dot = AQI_DOTS[entry.main.aqi] ?? AQI_DOTS[1];
   const dominant = dominantPollutant(entry.components);
 
   return (
     <Container className="p-4 flex items-center justify-between gap-3">
       <div className="flex items-center gap-3">
-        <span className={`w-3 h-3 rounded-full flex-shrink-0 ${level.dot}`} aria-hidden="true" />
+        <span className={`w-3 h-3 rounded-full flex-shrink-0 ${dot}`} aria-hidden="true" />
         <div>
-          <p className="text-white/60 text-sm font-light tracking-wide">Air Quality</p>
+          <p className="text-white/60 text-sm font-light tracking-wide">{t.details.airQuality}</p>
           <p className="text-white font-medium">
-            {level.label}
-            <span className="text-white/50 text-xs ml-1.5">AQI {entry.main.aqi}/5</span>
+            {levelKey}
+            <span className="text-white/50 text-xs ms-1.5">
+              {t.details.aqiOutOf} {entry.main.aqi}/5
+            </span>
           </p>
         </div>
       </div>
       {dominant && (
         <p className="text-white/60 text-xs font-light text-right">
-          Dominant
+          {t.details.dominant}
           <br />
           <span className="text-white/80">{dominant}</span>
         </p>

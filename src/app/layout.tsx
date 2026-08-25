@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from 'next';
 import Providers from './providers';
 import ThemeSync from '@/components/ThemeSync';
 import PwaRegister from '@/components/PwaRegister';
+import LocaleSync from '@/components/LocaleSync';
 import './globals.css';
 
 const geistSans = Geist({
@@ -53,6 +54,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <Providers>
           <ThemeSync />
+          <LocaleSync />
           <PwaRegister />
           {children}
         </Providers>

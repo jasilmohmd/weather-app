@@ -1,7 +1,9 @@
 import React from 'react';
 import { Cloud } from 'lucide-react';
+import { useI18n } from '@/hooks/useI18n';
 
 export default function Footer() {
+  const { t } = useI18n();
   return (
     <footer className="relative z-10 mt-auto py-4 px-4">
       <div className="">
@@ -10,15 +12,15 @@ export default function Footer() {
             {/* Logo/Icon */}
             <div className="flex items-center space-x-2">
               <Cloud className="w-5 h-5 text-white/60" />
-              <span className="text-white/60 font-light text-sm tracking-wide">WeatherApp</span>
+              <span className="text-white/60 font-light text-sm tracking-wide">
+                {t.footer.appName}
+              </span>
             </div>
 
             {/* Credits */}
             <div className="text-center space-y-1">
-              <p className="text-white/40 text-xs font-light">Powered by OpenWeatherMap API</p>
-              <p className="text-white/30 text-xs font-light">
-                Made with 🤍 for weather enthusiasts
-              </p>
+              <p className="text-white/40 text-xs font-light">{t.footer.poweredBy}</p>
+              <p className="text-white/30 text-xs font-light">{t.footer.madeWith}</p>
             </div>
           </div>
         </div>
