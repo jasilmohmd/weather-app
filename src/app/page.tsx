@@ -3,7 +3,7 @@
 import Container from '@/components/Container';
 import CurrentWeatherHero from '@/components/CurrentWeatherHero';
 import DailyForecast from '@/components/DailyForecast';
-import ForecastCharts from '@/components/ForecastCharts';
+import dynamic from 'next/dynamic';
 import Footer from '@/components/Footer';
 import HourlyForecast from '@/components/HourlyForecast';
 import Navbar from '@/components/Navbar';
@@ -14,6 +14,17 @@ import { isCelsiusAtom, placeAtom } from './atom';
 import { useWeather } from '@/hooks/useWeather';
 import { getWeatherGradient } from '@/utils/getWeatherGradient';
 import { useAtom } from 'jotai';
+
+const ForecastCharts = dynamic(() => import('@/components/ForecastCharts'), {
+  ssr: false,
+  loading: () => (
+    <div className="bg-white/10 backdrop-blur-3xl border border-white/20 rounded-3xl shadow-2xl p-6 animate-pulse">
+      <div className="h-6 w-20 bg-white/20 rounded mb-6" />
+      <div className="h-40 bg-white/10 rounded-xl mb-4" />
+      <div className="h-28 bg-white/10 rounded-xl" />
+    </div>
+  ),
+});
 
 export default function Home() {
   const [isCelsius] = useAtom(isCelsiusAtom);

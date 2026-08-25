@@ -27,7 +27,7 @@ Add a spec via [`TEMPLATE.md`](./features/TEMPLATE.md) before starting any of th
 - PWA manifest + offline shell
 - ~~Test suite (Vitest + React Testing Library)~~ ✅ done — `chore/test-suite`; remaining: route `error.tsx`, Prettier
 - Adopt OWM PNG icons or keep emojis — decide once (T6)
-- Code-split recharts via next/dynamic (~100 kB off the page chunk)
+- ~~Code-split recharts via next/dynamic~~ ✅ done — `chore/code-split-recharts` (/ page chunk 155 kB → 49 kB)
 
 ## Changelog
 
@@ -44,3 +44,4 @@ Add a spec via [`TEMPLATE.md`](./features/TEMPLATE.md) before starting any of th
 | 2026-08-25 | `chore/hygiene-t5-t8`: T5–T8 resolved — lucide-only icons (react-icons dropped), ESM next.config, utils renamed per filename==export convention |
 | 2026-08-25 | `chore/test-suite`: Vitest 4 + RTL + jsdom wired with @ alias; 39 tests over utils + WeatherIcon; `npm test` / `npm run test:watch` |
 | 2026-08-25 | `chore/error-boundaries-prettier`: T9 fully closed — error.tsx + not-found.tsx route boundaries; Prettier 3 configured and repo formatted |
+| 2026-08-25 | `chore/code-split-recharts`: ForecastCharts loaded via next/dynamic with pulse skeleton — / page chunk 155 kB → 49 kB |

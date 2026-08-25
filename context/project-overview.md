@@ -71,6 +71,7 @@ weather-app/
     │   ├── CurrentWeatherHero.tsx      # hero card + AQI tile + 6-tile WeatherDetails grid
     │   ├── DailyForecast.tsx           # date-dedupe + first-entry-≥6am logic + "Next 5 Days"
     │   ├── ForecastCharts.tsx          # recharts: temperature line + precipitation bars
+    │   │                             #   (loaded via next/dynamic in page.tsx — keeps ~100 kB out of initial load)
     │   ├── Footer.tsx            # static credits card
     │   ├── ForecastWeatherDetails.tsx  # one row of daily forecast + compact details grid
     │   ├── HourlyForecast.tsx          # first 12 slots, horizontal scroll
