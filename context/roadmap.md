@@ -22,7 +22,7 @@ Add a spec via [`TEMPLATE.md`](./features/TEMPLATE.md) before starting any of th
 - ~~Debounced autocomplete + keyboard-navigable suggestions~~ ✅ done — [`features/search-a11y.md`](./features/search-a11y.md)
 - Full ARIA combobox wiring on the search input (aria-expanded/activedescendant) — follow-up to search-a11y
 - ~~Route-handler proxy hiding the OWM key server-side~~ ✅ done — [`features/key-proxy.md`](./features/key-proxy.md); follow-up: proxy rate-limiting/caching
-- Hourly forecast expansion (24h+ with scroll snap)
+- ~~Hourly forecast expansion~~ ✅ done — `feat/hourly-expansion` (24 slots, scroll-snap, day-change markers)
 - i18n (date-fns locales already in tree)
 - PWA manifest + offline shell
 - ~~Test suite (Vitest + React Testing Library)~~ ✅ done — `chore/test-suite`; remaining: route `error.tsx`, Prettier
@@ -45,3 +45,4 @@ Add a spec via [`TEMPLATE.md`](./features/TEMPLATE.md) before starting any of th
 | 2026-08-25 | `chore/test-suite`: Vitest 4 + RTL + jsdom wired with @ alias; 39 tests over utils + WeatherIcon; `npm test` / `npm run test:watch` |
 | 2026-08-25 | `chore/error-boundaries-prettier`: T9 fully closed — error.tsx + not-found.tsx route boundaries; Prettier 3 configured and repo formatted |
 | 2026-08-25 | `chore/code-split-recharts`: ForecastCharts loaded via next/dynamic with pulse skeleton — / page chunk 155 kB → 49 kB |
+| 2026-08-25 | `feat/hourly-expansion`: hourly strip widened to 24 slots with scroll-snap and weekday markers on day change; +5 tests |

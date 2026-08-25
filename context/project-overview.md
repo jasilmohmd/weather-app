@@ -74,7 +74,7 @@ weather-app/
     │   │                             #   (loaded via next/dynamic in page.tsx — keeps ~100 kB out of initial load)
     │   ├── Footer.tsx            # static credits card
     │   ├── ForecastWeatherDetails.tsx  # one row of daily forecast + compact details grid
-    │   ├── HourlyForecast.tsx          # first 12 slots, horizontal scroll
+    │   ├── HourlyForecast.tsx          # first 24 slots, scroll-snap, weekday markers on day change
     │   ├── Navbar.tsx            # location/date, geolocation btn, unit toggle, pin-city star,
     │   │                         #    desktop+mobile Searchbox, internal SuggestionBox
     │   ├── PlacesBar.tsx         # saved + recent city chips (localStorage-persisted)

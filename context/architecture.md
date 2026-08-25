@@ -75,7 +75,8 @@ RootLayout (layout.tsx — SERVER component, exports metadata)
             │   │   ├── AqiTile { lat; lon } — self-contained useAqi, hides on error
             │   │   └── WeatherDetails { visibility; humidity; windSpeed; airPressure; sunrise; sunset }  ← pre-formatted strings
             │   │       └── internal SingleWeatherDetail { icon: React.ElementType; label; value; unit? }
-            │   ├── HourlyForecast { list: WeatherEntry[]; isCelsius }    — slices first 12 internally
+            │   ├── HourlyForecast { list: WeatherEntry[]; isCelsius }    — slices first 24, snap-scroll,
+            │   │                                                          weekday marker on day change
             │   ├── ForecastCharts { list; isCelsius }                    — recharts temp line + precip bars
             │   ├── DailyForecast { list; city; isCelsius }               — date-dedupe + ≥6am rule + slice(1,6) internally
             │   ├── RadarMap { lat; lon }                                 — collapsed; iframe mounts only when opened
