@@ -4,7 +4,7 @@
 
 | Layer | Technology | Version | Notes |
 |---|---|---|---|
-| Framework | Next.js (App Router) | 15.3.3 | Client-heavy; both entry files use `'use client'` |
+| Framework | Next.js (App Router) | 15.5.24 | Client-heavy; security-patched line (was 15.3.3). `next lint` deprecated → migrate to ESLint CLI before Next 16 | |
 | UI | React | ^19.0.0 | |
 | Language | TypeScript | ^5 | `strict: true`; target ES2017; bundler resolution |
 | Styling | Tailwind CSS | ^4 | CSS-first config (`@import "tailwindcss"` only); NO tailwind.config file |

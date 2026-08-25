@@ -21,6 +21,8 @@ Add a spec via [`TEMPLATE.md`](./features/TEMPLATE.md) before starting any of th
 
 - ~~Debounced autocomplete + keyboard-navigable suggestions~~ ✅ done — [`features/search-a11y.md`](./features/search-a11y.md)
 - Full ARIA combobox wiring on the search input (aria-expanded/activedescendant) — follow-up to search-a11y
+- Migrate `next lint` → ESLint CLI (deprecated in Next 15.5, removed in 16)
+- Upgrade path to Next 16 (evaluate breaking changes when ecosystem ready)
 - ~~Route-handler proxy hiding the OWM key server-side~~ ✅ done — [`features/key-proxy.md`](./features/key-proxy.md); follow-up: proxy rate-limiting/caching
 - ~~Hourly forecast expansion~~ ✅ done — `feat/hourly-expansion` (24 slots, scroll-snap, day-change markers)
 - ~~i18n~~ ✅ done — [`features/i18n.md`](./features/i18n.md) (English + Arabic RTL; follow-ups: more locales, Arabic-Indic digits)
@@ -48,3 +50,4 @@ Add a spec via [`TEMPLATE.md`](./features/TEMPLATE.md) before starting any of th
 | 2026-08-25 | `feat/hourly-expansion`: hourly strip widened to 24 slots with scroll-snap and weekday markers on day change; +5 tests |
 | 2026-08-25 | `feat/pwa`: installable PWA — webmanifest, SVG icon, hand-rolled service worker (offline shell for navigations/static/API), prod-only registration |
 | 2026-08-25 | `feat/i18n-arabic-rtl`: EN + AR dictionaries w/ parity test, persisted locale atom, Navbar switcher, RTL via html dir + logical utilities, localized dates; +4 tests |
+| 2026-08-25 | `fix/nextjs-security-update`: next + eslint-config-next 15.3.3 → 15.5.24 (security gate failure); all gates green |
