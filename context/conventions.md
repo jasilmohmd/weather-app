@@ -52,6 +52,14 @@ Follow these when writing any code in this repo. When existing code and this doc
 - Server/weather data → TanStack Query only; never copy query results into useState/atoms.
 - New persisted preferences (favorites, units, theme) → jotai `atomWithStorage` from `jotai/utils`.
 
+## Testing
+
+- Runner: Vitest 4 (`vitest.config.mts`, jsdom, `@/*` alias). Run `npm test` (CI-style) or `npm run test:watch`.
+- Tests live in colocated `__tests__/` folders next to the code under test; name files `*.test.ts` / `*.test.tsx`.
+- Import `describe/it/expect` explicitly from `"vitest"` (globals are off); jest-dom matchers via `src/test/setup.ts`.
+- RTL: call `afterEach(cleanup)` when a file renders components (auto-cleanup needs globals, which are off).
+- Test pure utils directly; component tests render and assert roles/labels/text. Keep network-dependent components for later with mocked services.
+
 ## Error Handling
 
 - Network calls: try/catch; narrow with `axios.isAxiosError`; surface messages to UI (see Navbar SuggestionBox error rendering) — do NOT just `console.log`.

@@ -20,13 +20,15 @@ Build tooling is Next.js's built-in compiler + PostCSS (`postcss.config.mjs` →
 ## Scripts (`package.json`)
 
 ```bash
-npm run dev     # next dev
-npm run build   # next build
-npm run start   # next start
-npm run lint    # next lint
+npm run dev         # next dev
+npm run build       # next build
+npm run start       # next start
+npm run lint        # next lint
+npm test            # vitest run (39 tests)
+npm run test:watch  # vitest watch mode
 ```
 
-No `test` script exists.
+Tests live in colocated `__tests__/` folders (`src/utils/__tests__/`, `src/components/__tests__/`) plus shared setup at `src/test/setup.ts`; config in `vitest.config.mts` (jsdom, `@/*` alias). Note: a running `next dev` locks `.next` and blocks `next build` — stop one before the other on Windows.
 
 ## Environment Variables
 

@@ -50,7 +50,7 @@ State        Jotai atoms (src/app/atom.ts) + TanStack Query v5
 HTTP         Axios → own /api routes → OpenWeatherMap (key private, server-side only)
 Weather data OpenWeatherMap via WEATHER_API_KEY in .env.local (never NEXT_PUBLIC_)
 Routes       "/" (src/app/page.tsx) + /api/forecast · /api/cities · /api/aqi
-Tests        None yet
+Tests        Vitest 4 + RTL · npm test (run before every PR)
 Run          npm run dev · Lint: npm run lint · Build: npm run build
 ```
 

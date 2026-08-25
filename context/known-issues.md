@@ -91,8 +91,8 @@ Decision made: keep emoji icons (now a11y-labeled). The unused `images.remotePat
 - `metersToKilometers.ts` local `Kilometers` → `kilometers`
 All imports repointed; grep-clean.
 
-### T9 🧹 No tests / no error boundary / no Prettier
-Zero test files or runner. No `error.tsx`/`not-found.tsx`/`loading.tsx`. No formatter config (only stock ESLint). Adding Vitest + Testing Library is optional future work; error boundary is refactor R9.
+### T9 🧹 No error boundary / no Prettier — PARTIALLY RESOLVED
+✅ Test suite landed (`chore/test-suite`): Vitest 4 + React Testing Library + jsdom; 39 tests across utils and WeatherIcon (`npm test`). Still open: no `error.tsx`/`not-found.tsx` route boundaries, no Prettier/formatter config.
 
 ### A6 ✅⚠️ Autocomplete fires per keystroke — FIXED
 300 ms debounce + stale-response sequence guard + unmount cleanup in `Navbar.tsx`. See `features/search-a11y.md`.

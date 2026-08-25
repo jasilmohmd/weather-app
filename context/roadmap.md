@@ -25,7 +25,7 @@ Add a spec via [`TEMPLATE.md`](./features/TEMPLATE.md) before starting any of th
 - Hourly forecast expansion (24h+ with scroll snap)
 - i18n (date-fns locales already in tree)
 - PWA manifest + offline shell
-- Test suite (Vitest + React Testing Library)
+- ~~Test suite (Vitest + React Testing Library)~~ ✅ done — `chore/test-suite`; remaining: route `error.tsx`, Prettier
 - Adopt OWM PNG icons or keep emojis — decide once (T6)
 - Code-split recharts via next/dynamic (~100 kB off the page chunk)
 
@@ -42,3 +42,4 @@ Add a spec via [`TEMPLATE.md`](./features/TEMPLATE.md) before starting any of th
 | 2026-08-25 | `feat/search-debounce-keyboard`: backlog item — 300 ms debounced autocomplete with stale guard, keyboard-accessible suggestions, a11y labels batch |
 | 2026-08-25 | `feat/server-key-proxy`: S2 resolved — /api route handlers + private WEATHER_API_KEY; client bundle verified key-free |
 | 2026-08-25 | `chore/hygiene-t5-t8`: T5–T8 resolved — lucide-only icons (react-icons dropped), ESM next.config, utils renamed per filename==export convention |
+| 2026-08-25 | `chore/test-suite`: Vitest 4 + RTL + jsdom wired with @ alias; 39 tests over utils + WeatherIcon; `npm test` / `npm run test:watch` |
