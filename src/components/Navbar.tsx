@@ -4,11 +4,12 @@ import React, { useState } from 'react'
 import Searchbox from './Searchbox';
 import axios from 'axios';
 import { useAtom } from 'jotai';
-import { isCelsiusAtom, placeAtom } from '@/app/atom';
-import { MapPin } from 'lucide-react';
+import { isCelsiusAtom, placeAtom, recentSearchesAtom, savedPlacesAtom } from '@/app/atom';
+import { MapPin, Star } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { City, WeatherEntry } from '@/types/weather';
 import { findCities, getForecastByCoords } from '@/services/weatherApi';
+import { MAX_SAVED_PLACES, pushRecent, removePlace } from '@/utils/recentSearches';
 
 type Props = { location?: string, data?: WeatherEntry }
 
@@ -21,7 +22,25 @@ export default function Navbar({ location, data }: Props) {
   const [showSuggestions, setShowSuggestion] = useState(false);
   //
   const [, setPlace] = useAtom(placeAtom);
+  const [savedPlaces, setSavedPlaces] = useAtom(savedPlacesAtom);
+  const [recentSearches, setRecentSearches] = useAtom(recentSearchesAtom);
   const [isCelsius, setIsCelsius] = useAtom(isCelsiusAtom);
+
+  const isPinned = location ? savedPlaces.includes(location) : false;
+
+  function selectPlace(name: string) {
+    setPlace(name);
+    setRecentSearches(pushRecent(recentSearches, name));
+  }
+
+  function togglePin() {
+    if (!location) return;
+    if (savedPlaces.includes(location)) {
+      setSavedPlaces(removePlace(savedPlaces, location));
+    } else {
+      setSavedPlaces([location, ...savedPlaces].slice(0, MAX_SAVED_PLACES));
+    }
+  }
 
 
   async function handleInputChange(value: string) {
@@ -70,7 +89,7 @@ export default function Navbar({ location, data }: Props) {
 
         try {
           const response = await getForecastByCoords(latitude, longitude);
-          setPlace(response.city.name);
+          selectPlace(response.city.name);
         } catch (error: unknown) {
           if (axios.isAxiosError(error) && error.response) {
             setError(error.response.data?.message || "Failed to load your location weather.");
@@ -97,7 +116,7 @@ export default function Navbar({ location, data }: Props) {
     }
     else {
       setError("");
-      setPlace(city);
+      selectPlace(city);
       setShowSuggestion(false);
     }
 
@@ -126,6 +145,16 @@ export default function Navbar({ location, data }: Props) {
               className="text-white/80 font-light text-sm px-2 py-1 hover:bg-white/10 rounded-full transition-colors duration-200"
             >
               °{isCelsius ? 'C' : 'F'}
+            </button>
+
+            <button
+              onClick={togglePin}
+              disabled={!location}
+              aria-label={isPinned ? 'Unpin current city' : 'Pin current city'}
+              title={isPinned ? 'Unpin current city' : 'Pin current city'}
+              className="p-2 hover:bg-white/10 rounded-full transition-colors duration-200 disabled:opacity-40"
+            >
+              <Star className="w-5 h-5 text-white/80" fill={isPinned ? 'currentColor' : 'none'} />
             </button>
           </div>
 

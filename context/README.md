@@ -26,6 +26,7 @@ This folder is the **single source of truth** for humans and AI coding agents wo
 
 ## Protocol for AI Agents
 
+0. **Branching rule (mandatory):** before building ANY feature, create a dedicated branch first — `git checkout -b feat/<feature-name>` (cut from `main`, or from the unmerged foundation/feature branch it depends on if that PR isn't merged yet; note the base in the PR). One branch = one feature. Never commit features to `main` or stack unrelated work onto another feature's branch.
 1. **Before writing code:** read `conventions.md` + `known-issues.md` + the relevant `features/*.md` spec. Skim `architecture.md` if the change touches data flow.
 2. **Never re-introduce known bugs** listed in `known-issues.md`. If your change touches a buggy line anyway, fix it and check it off.
 3. **Follow existing patterns over inventing new ones.** This codebase has deliberate conventions (default exports, `type Props`, Tailwind utility strings). See `conventions.md`.

@@ -5,7 +5,7 @@ Statuses: `planned` → `in-progress` → `done`. Update this table whenever a f
 | # | Feature | Priority | Status | Spec | Depends on | Resolves |
 |---|---|---|---|---|---|---|
 | 1 | Refactor foundation (types/services/hooks, split page.tsx, QueryClient+queryKey fixes) | **P0** | **done** (branch `refactor/foundation`) | [refactor-foundation.md](./features/refactor-foundation.md) | — | B1-B5, A1-A5, S1, T1-T4 |
-| 2 | Favorites & recent cities | P1 | planned | [favorites-recent-cities.md](./features/favorites-recent-cities.md) | #1 ✅ | — |
+| 2 | Favorites & recent cities | P1 | **done** (branch `feat/favorites-recent-cities`) | [favorites-recent-cities.md](./features/favorites-recent-cities.md) | #1 ✅ | — |
 | 3 | Dark / light mode + persisted preferences | P1 | planned | [dark-light-mode.md](./features/dark-light-mode.md) | #1 ✅ (B2 gradient logic collapsed; step 4 still applies) | T4 done early |
 | 4 | AQI + weather charts + radar map | P2 | planned | [aqi-weather-maps.md](./features/aqi-weather-maps.md) | #1 required (service layer) | — |
 
@@ -34,3 +34,4 @@ Add a spec via [`TEMPLATE.md`](./features/TEMPLATE.md) before starting any of th
 | 2026-08-25 | Initial review; context folder created; roadmap seeded with 4 specs |
 | 2026-08-25 | PR #1 (`fix/remove-hardcoded-api-key`): S1 source fix + `.env.example` |
 | 2026-08-25 | `refactor/foundation`: spec #1 implemented — types/services/hooks extracted, page split, B1–B5/A1–A5/T1–T4 fixed, metadata restored |
+| 2026-08-25 | `feat/favorites-recent-cities`: spec #2 implemented — persisted saved/recent places, chips bar, pin button; branching rule added to agent protocol |
