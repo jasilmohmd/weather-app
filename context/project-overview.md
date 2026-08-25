@@ -49,7 +49,7 @@ weather-app/
 ├── postcss.config.mjs            # @tailwindcss/postcss
 ├── tsconfig.json                 # strict, alias @/* → ./src/*
 ├── package.json                  # see scripts above
-├── public/                       # stock create-next-app SVGs only
+├── public/                       # icon.svg (PWA), offline.html shell, sw.js (versioned caches)
 └── src/
     ├── app/
     │   ├── api/                   # route handlers (only OWM entry point; key stays server-side)
@@ -58,8 +58,8 @@ weather-app/
     │   │   └── forecast/route.ts  # GET ?city= or ?lat&lon → WeatherResponse
     │   ├── error.tsx             # client error boundary (retry + digest, glass-styled)
     │   ├── not-found.tsx         # 404 page with link home
-    │   ├── globals.css           # tailwind import + dark custom-variant + .scrollbar-hide / .pb-safe
-    │   ├── layout.tsx            # SERVER component: Geist fonts + metadata + <Providers>
+    │   ├── manifest.ts           # PWA webmanifest route (/manifest.webmanifest)
+    │   ├── globals.css           # tailwind import + dark custom-variant + .scrollbar-hide / .pb-safe    │   ├── layout.tsx            # SERVER component: Geist fonts + metadata + <Providers>
     │   ├── providers.tsx         # 'use client': QueryClientProvider (useState-created client)
     │   ├── page.tsx              # thin composition root (~80 lines): useWeather → sections
     │   ├── atom.ts               # placeAtom, isCelsiusAtom💾, savedPlacesAtom💾, recentSearchesAtom💾, themeAtom💾
@@ -78,6 +78,7 @@ weather-app/
     │   ├── Navbar.tsx            # location/date, geolocation btn, unit toggle, pin-city star,
     │   │                         #    desktop+mobile Searchbox, internal SuggestionBox
     │   ├── PlacesBar.tsx         # saved + recent city chips (localStorage-persisted)
+    │   ├── PwaRegister.tsx       # registers /sw.js in production builds only
     │   ├── RadarMap.tsx          # collapsible Windy radar iframe (loads only when opened)
     │   ├── Searchbox.tsx         # controlled form input + submit icon (uses cn())
     │   ├── ThemeSync.tsx         # keeps .dark class on <html> in sync with themeAtom + OS

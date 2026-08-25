@@ -1,7 +1,8 @@
 import { Geist, Geist_Mono } from 'next/font/google';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import Providers from './providers';
 import ThemeSync from '@/components/ThemeSync';
+import PwaRegister from '@/components/PwaRegister';
 import './globals.css';
 
 const geistSans = Geist({
@@ -17,6 +18,15 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'Weather App',
   description: 'Real-time weather forecasts powered by OpenWeatherMap',
+  appleWebApp: {
+    capable: true,
+    title: 'Weather',
+    statusBarStyle: 'black-translucent',
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#fb923c',
 };
 
 // Applies the persisted theme before first paint to prevent a flash of the wrong theme.
@@ -43,6 +53,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <Providers>
           <ThemeSync />
+          <PwaRegister />
           {children}
         </Providers>
       </body>

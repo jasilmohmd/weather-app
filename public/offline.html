@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Offline - Weather App</title>
+    <style>
+      * {
+        margin: 0;
+        box-sizing: border-box;
+      }
+      body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        font-family: system-ui, sans-serif;
+        background: linear-gradient(135deg, #1e293b, #312e81, #0f172a);
+      }
+      .card {
+        max-width: 24rem;
+        padding: 2rem;
+        text-align: center;
+        border-radius: 1.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(12px);
+      }
+      h1 {
+        color: #fff;
+        font-size: 1.125rem;
+        font-weight: 300;
+        margin-bottom: 0.5rem;
+      }
+      p {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.875rem;
+        font-weight: 300;
+        line-height: 1.5;
+      }
+      button {
+        margin-top: 1rem;
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: transparent;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.875rem;
+        cursor: pointer;
+      }
+      button:hover {
+        background: rgba(255, 255, 255, 0.15);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>You're offline</h1>
+      <p>
+        Cached forecasts are still available for cities you visited recently.
+        Reconnect and retry to fetch fresh data.
+      </p>
+      <button onclick="location.reload()">Retry</button>
+    </div>
+  </body>
+</html>
