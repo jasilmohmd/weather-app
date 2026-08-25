@@ -1,6 +1,6 @@
 # Known Issues & Tech Debt
 
-> **2026-08-25 refactor update:** items B1–B5, A1–A5, T1–T4 and the source half of S1 were fixed on branch `refactor/foundation`; A6 and the ♿ accessibility batch on `feat/search-debounce-keyboard`; S2 on `feat/server-key-proxy`. Entries below are kept for reference; headings marked ✅ are resolved. Still open: T5–T9.
+> **2026-08-25 update:** B1–B5, A1–A5, T1–T4 + S1-source fixed on `refactor/foundation`; A6 + ♿ batch on `feat/search-debounce-keyboard`; S2 on `feat/server-key-proxy`; T5–T8 on `chore/hygiene-t5-t8`. Entries kept for reference; ✅ headings are resolved. Still open: **T9 only** (tests, error boundary file, Prettier).
 
 Review date: 2026-08-25 @ commit `0f97960`. Line numbers refer to current source. Fix owners: any agent touching the relevant file should fix-and-check-off items marked 🔧; structural items are bundled into [`features/refactor-foundation.md`](./features/refactor-foundation.md).
 
@@ -26,7 +26,7 @@ Fix: second call must pass `data.city.sunset`. One-line each.
 Fix: condition should be `(showSuggestions && suggestions.length >= 1) || error`.
 
 ### B4 🐛 Inconsistent rounding between units
-`src/utils/convertKelvinToCelcius.ts` — `convertKtoC` uses `Math.floor` (:3) but `convertKtoF` uses `Math.round` (:7). Toggling units shows different rounding behavior (e.g. 19.9° renders 19 C but 20 F).
+`src/utils/convertKelvinToCelsius.ts (renamed from ...Celcius.ts)` — `convertKtoC` uses `Math.floor` (:3) but `convertKtoF` uses `Math.round` (:7). Toggling units shows different rounding behavior (e.g. 19.9° renders 19 C but 20 F).
 
 Fix: use `Math.round` for both (or both floor) — pick one and apply everywhere temps render.
 
@@ -76,19 +76,20 @@ Resolved by routing all OWM traffic through `/api/*` route handlers with a priva
 ### T4 🧹 Metadata disabled
 `layout.tsx:21-24` metadata export commented out → no `<title>`/description (bad SEO/bookmark UX). Re-enable with proper title during refactor R7.
 
-### T5 🧹 Two icon libraries
-`lucide-react` everywhere except `react-icons/io5` (`IoSearch`) in `Searchbox.tsx:3`. Consolidate on lucide when convenient.
+### T5 ✅🧹 Two icon libraries — FIXED
+Consolidated on lucide-react; `react-icons` dependency removed (Searchbox uses lucide `Search`).
 
-### T6 🧹 Unused image config
-`next.config.ts:3` whitelists openweathermap.org images that the app never uses (icons are emojis). Either adopt OWM PNG icons (`https://openweathermap.org/img/wn/{icon}@2x.png`) or drop the config.
+### T6 ✅🧹 Unused image config — RESOLVED
+Decision made: keep emoji icons (now a11y-labeled). The unused `images.remotePatterns` whitelist was removed. If OWM PNG icons are ever adopted, re-add it.
 
-### T7 🧹 Config style inconsistency
-`next.config.ts` uses CommonJS `module.exports` in a TS file; other configs are ESM. Normalize to `export default` / `nextConfig` object pattern.
+### T7 ✅🧹 Config style inconsistency — FIXED
+`next.config.ts` now uses the standard ESM `NextConfig` typed default export; unused image config dropped with it.
 
-### T8 🧹 Naming nits
-- `convertKelvinToCelcius.ts` — misspelled ("Celcius"); renaming touches imports in `page.tsx` only
-- `speedInMpsToKmph.ts` exports `convertSpeed` (filename ≠ function)
-- `metersToKilometers.ts:2` local var capitalized `Kilometers`
+### T8 ✅🧹 Naming nits — FIXED
+- `convertKelvinToCelcius.ts` → `convertKelvinToCelsius.ts` (spelling)
+- `speedInMpsToKmph.ts` → `convertSpeed.ts` (filename now matches its export, like the other utils)
+- `metersToKilometers.ts` local `Kilometers` → `kilometers`
+All imports repointed; grep-clean.
 
 ### T9 🧹 No tests / no error boundary / no Prettier
 Zero test files or runner. No `error.tsx`/`not-found.tsx`/`loading.tsx`. No formatter config (only stock ESLint). Adding Vitest + Testing Library is optional future work; error boundary is refactor R9.

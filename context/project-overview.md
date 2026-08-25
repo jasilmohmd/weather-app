@@ -41,7 +41,7 @@ weather-app/
 ├── .env.local                    # OWM API key (gitignored)
 ├── .env.example                  # tracked template (gitignore-negated)
 ├── eslint.config.mjs             # FlatCompat → next/core-web-vitals + next/typescript
-├── next.config.ts                # images.remotePatterns: openweathermap.org/** (currently unused)
+├── next.config.ts                # standard ESM NextConfig export (no custom settings)
 ├── postcss.config.mjs            # @tailwindcss/postcss
 ├── tsconfig.json                 # strict, alias @/* → ./src/*
 ├── package.json                  # see scripts above
@@ -87,18 +87,17 @@ weather-app/
     │   └── weatherApi.ts         # CLIENT wrappers hitting /api/* (stable signatures)
     ├── types/
     │   └── weather.ts            # all OWM response interfaces incl. AirPollutionResponse
-    └── utils/                    # camelCase plain-function modules
+    └── utils/                    # camelCase plain-function modules (filename == primary export)
         ├── cn.ts                 # clsx + tailwind-merge
-        ├── convertKelvinToCelcius.ts  # convertKtoC / convertKtoF (both Math.round now)
+        ├── convertKelvinToCelsius.ts  # convertKtoC / convertKtoF (both Math.round)
+        ├── convertSpeed.ts       # m/s → km/h string
         ├── getDayOrNightIcon.tsx # swaps trailing d/n based on 06–18h window
         ├── getWeatherGradient.ts # OWM condition → gradient stops (literal light+dark: classes)
         ├── metersToKilometers.ts # m → km string (toFixed(0))
         ├── recentSearches.ts     # pushRecent/removePlace + MAX_RECENT_SEARCHES/MAX_SAVED_PLACES
-        ├── safeFormat.ts         # safeFormat(dateStr, fmt) / safeFormatUnix(unix, fmt) → "N/A"
-        └── speedInMpsToKmph.ts   # m/s → km/h string
+        └── safeFormat.ts         # safeFormat(dateStr, fmt) / safeFormatUnix(unix, fmt) → "N/A"
 ```
-
-**Folders that do NOT exist yet** (created by refactor spec): `types/`, `services/`, `hooks/`, `context/`-style providers beyond root layout.
+**Folder note:** `types/`, `services/`, `hooks/`, `lib/` exist (created by the refactor + key-proxy specs).
 
 ## Config Details
 

@@ -101,7 +101,7 @@ src/components/WeatherSkeleton.tsx
 | B1 | `sunset={safeFormatUnix(data.city.sunset, …)}` | DailyForecast props (both call sites) |
 | B2 | replaced by dark-mode spec's gradient helper; interim: collapse ternary to single class string | page composition |
 | B3 | `suggestions.length >= 1` condition; also render error row when list empty | Navbar SuggestionBox (:203) |
-| B4 | `Math.round` in both converters | `utils/convertKelvinToCelcius.ts:3,7` |
+| B4 | `Math.round` in both converters | `utils/convertKelvinToCelsius.ts (then named ...Celcius.ts)` |
 | B5 | heading "Next 5 Days" + comment matching `.slice(1,6)` behavior | DailyForecast |
 | A3 | remove both `setTimeout(...,1000)` blocks; skeleton driven by real loading state | Navbar :79-82, :105-109 |
 | A4 | add error callback to `getCurrentPosition`; surface message via existing error state | Navbar :66-92 |

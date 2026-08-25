@@ -13,7 +13,7 @@ import {
   YAxis,
 } from 'recharts';
 import Container from './Container';
-import { convertKtoC, convertKtoF } from '@/utils/convertKelvinToCelcius';
+import { convertKtoC, convertKtoF } from '@/utils/convertKelvinToCelsius';
 import { safeFormat } from '@/utils/safeFormat';
 import type { WeatherEntry } from '@/types/weather';
 

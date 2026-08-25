@@ -41,3 +41,4 @@ Add a spec via [`TEMPLATE.md`](./features/TEMPLATE.md) before starting any of th
 | 2026-08-25 | `feat/aqi-weather-maps`: spec #4 implemented — AQI tile (Air Pollution API), recharts temp/precip trends, collapsible Windy radar embed |
 | 2026-08-25 | `feat/search-debounce-keyboard`: backlog item — 300 ms debounced autocomplete with stale guard, keyboard-accessible suggestions, a11y labels batch |
 | 2026-08-25 | `feat/server-key-proxy`: S2 resolved — /api route handlers + private WEATHER_API_KEY; client bundle verified key-free |
+| 2026-08-25 | `chore/hygiene-t5-t8`: T5–T8 resolved — lucide-only icons (react-icons dropped), ESM next.config, utils renamed per filename==export convention |

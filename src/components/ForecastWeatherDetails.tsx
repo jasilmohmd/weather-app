@@ -1,7 +1,7 @@
 import React from 'react'
 import WeatherIcon from './WeatherIcon'
 import { CompactWeatherDetails, WeatherDetailProps } from './WeatherDetails';
-import { convertKtoC, convertKtoF } from '@/utils/convertKelvinToCelcius';
+import { convertKtoC, convertKtoF } from '@/utils/convertKelvinToCelsius';
 
 
 export interface ForecastWeatherDetailsProps extends WeatherDetailProps {

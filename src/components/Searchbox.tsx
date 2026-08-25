@@ -1,6 +1,6 @@
 import { cn } from '@/utils/cn';
 import React from 'react'
-import { IoSearch } from 'react-icons/io5'
+import { Search } from 'lucide-react'
 
 type Props = {
   className?: string
@@ -32,7 +32,7 @@ export default function Searchbox(props: Props) {
         aria-label="Search"
         className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-white/70 hover:text-white transition-colors"
       >
-        <IoSearch />
+        <Search />
       </button>
     </form>
   );

@@ -1,7 +1,7 @@
 import Container from './Container';
 import WeatherIcon from './WeatherIcon';
 import { format, parseISO } from 'date-fns';
-import { convertKtoC, convertKtoF } from '@/utils/convertKelvinToCelcius';
+import { convertKtoC, convertKtoF } from '@/utils/convertKelvinToCelsius';
 import { getDayOrNightIcon } from '@/utils/getDayOrNightIcon';
 import type { WeatherEntry } from '@/types/weather';
 

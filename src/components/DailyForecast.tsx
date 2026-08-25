@@ -2,7 +2,7 @@ import React from 'react'
 import Container from './Container';
 import ForecastWeatherDetails from './ForecastWeatherDetails';
 import { metersToKilometers } from '@/utils/metersToKilometers';
-import { convertSpeed } from '@/utils/speedInMpsToKmph';
+import { convertSpeed } from '@/utils/convertSpeed';
 import { safeFormat, safeFormatUnix } from '@/utils/safeFormat';
 import type { City, WeatherEntry } from '@/types/weather';
 

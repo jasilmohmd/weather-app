@@ -1,10 +1,10 @@
 import AqiTile from "./AqiTile";
 import WeatherIcon from "./WeatherIcon";
 import WeatherDetails from "./WeatherDetails";
-import { convertKtoC, convertKtoF } from "@/utils/convertKelvinToCelcius";
+import { convertKtoC, convertKtoF } from "@/utils/convertKelvinToCelsius";
 import { getDayOrNightIcon } from "@/utils/getDayOrNightIcon";
 import { metersToKilometers } from "@/utils/metersToKilometers";
-import { convertSpeed } from "@/utils/speedInMpsToKmph";
+import { convertSpeed } from "@/utils/convertSpeed";
 import { safeFormatUnix } from "@/utils/safeFormat";
 import type { City, WeatherEntry } from "@/types/weather";
 
