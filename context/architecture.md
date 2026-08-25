@@ -37,10 +37,12 @@ Former anti-patterns (refetch-via-useEffect, artificial delays) are gone as of `
 
 | Atom | Type | Default | Writers | Readers |
 |---|---|---|---|---|
-| `placeAtom` | `string` | `"Delhi"` | `Navbar` (`setPlace`) | `page.tsx` |
+| `placeAtom` | `string` | `"Delhi"` | `Navbar` (`selectPlace`) | `page.tsx` |
 | `isCelsiusAtom` | `boolean` | `true` | `Navbar` (`setIsCelsius`) | `page.tsx` → props |
+| `savedPlacesAtom` 💾 | `string[]` | `[]` | Navbar pin toggle, PlacesBar remove | Navbar, PlacesBar |
+| `recentSearchesAtom` 💾 | `string[]` | `[]` | Navbar (`selectPlace`), PlacesBar remove | PlacesBar |
 
-Nothing is persisted to localStorage yet. New persistent state should use jotai's `atomWithStorage` (see favorites/dark-mode specs). The old `loadingCityAtom` was removed in the refactor — loading UI now comes from React Query's `isPending`.
+💾 = persisted to localStorage via `atomWithStorage` (keys `weather.savedPlaces`, `weather.recentSearches`; caps 10/5 in `utils/recentSearches.ts`). `isCelsius` persistence is planned for the dark-mode spec.
 
 ### TanStack Query
 
@@ -66,6 +68,7 @@ RootLayout (layout.tsx — SERVER component, exports metadata)
             │   ├── Searchbox { className?; value; onChange; onSubmit }   [desktop md:flex]
             │   ├── SuggestionBox (internal) { showSuggestions; suggestions; handleSuggestionClick; error }
             │   └── second Searchbox + SuggestionBox clone [mobile]
+            ├── PlacesBar (after Navbar) — saved ★ + recent chips, click = switch, × = remove
             ├── main
             │   ├── CurrentWeatherHero { data: WeatherEntry; city: City; isCelsius }
             │   │   ├── hero card (WeatherIcon, big temp, description, feels-like, H/L)

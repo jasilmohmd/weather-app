@@ -4,11 +4,13 @@
 
 | Field | Value |
 |---|---|
-| Status | planned |
+| Status | **done** (branch `feat/favorites-recent-cities`) |
 | Priority | P1 |
 | Depends on | [refactor-foundation.md](./refactor-foundation.md) recommended (queryKey pattern + types folder) — implementable without it but expect rework |
 | Resolves | — |
 | New dependencies | none (jotai's `atomWithStorage` ships with jotai ^2.12.5 via `jotai/utils`) |
+
+> **Implementation notes (2026-08-25):** recents are written only on *actual city switches* (`selectPlace` in Navbar = submit flow + geolocation flow), not on bare suggestion clicks — clicking a suggestion only fills the input. PlacesBar mounts between `<Navbar/>` and `<main>` in `page.tsx`. A `mounted` guard prevents SSR/localStorage hydration mismatch. Recents chips hide entries that are already pinned (no duplicates across sections). Helpers live in `src/utils/recentSearches.ts` (`pushRecent`, `removePlace`, caps).
 
 ## Summary
 

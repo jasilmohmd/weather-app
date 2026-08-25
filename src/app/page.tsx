@@ -6,6 +6,7 @@ import DailyForecast from "@/components/DailyForecast";
 import Footer from "@/components/Footer";
 import HourlyForecast from "@/components/HourlyForecast";
 import Navbar from "@/components/Navbar";
+import PlacesBar from "@/components/PlacesBar";
 import WeatherSkeleton from "@/components/WeatherSkeleton";
 import { isCelsiusAtom, placeAtom } from "./atom";
 import { useWeather } from "@/hooks/useWeather";
@@ -51,6 +52,10 @@ export default function Home() {
       </div>
 
       <Navbar location={data.city.name} data={data.list[0]} />
+
+      <div className="pt-2">
+        <PlacesBar />
+      </div>
 
       <main className="px-3 max-w-7xl mx-auto flex flex-col gap-6 w-full pb-10 pt-4">
 

@@ -51,8 +51,9 @@ weather-app/
     │   ├── globals.css           # tailwind import + .scrollbar-hide / .pb-safe helpers
     │   ├── layout.tsx            # SERVER component: Geist fonts + metadata + <Providers>
     │   ├── providers.tsx         # 'use client': QueryClientProvider (useState-created client)
-    │   ├── page.tsx              # thin composition root (~75 lines): useWeather → sections
-    │   ├── atom.ts               # placeAtom, isCelsiusAtom
+    │   ├── page.tsx              # thin composition root (~80 lines): useWeather → sections
+    │   ├── atom.ts               # placeAtom, isCelsiusAtom, savedPlacesAtom*, recentSearchesAtom*
+    │   │                         #    (* persisted via jotai atomWithStorage → localStorage)
     │   └── favicon.ico
     ├── components/               # all default-exported PascalCase .tsx
     │   ├── Container.tsx         # glass-card wrapper (bg-white/10 backdrop-blur-3xl …)
@@ -61,8 +62,9 @@ weather-app/
     │   ├── Footer.tsx            # static credits card
     │   ├── ForecastWeatherDetails.tsx  # one row of daily forecast + compact details grid
     │   ├── HourlyForecast.tsx          # first 12 slots, horizontal scroll
-    │   ├── Navbar.tsx            # location/date, geolocation btn, unit toggle,
+    │   ├── Navbar.tsx            # location/date, geolocation btn, unit toggle, pin-city star,
     │   │                         #    desktop+mobile Searchbox, internal SuggestionBox
+    │   ├── PlacesBar.tsx         # saved + recent city chips (localStorage-persisted)
     │   ├── Searchbox.tsx         # controlled form input + submit icon (uses cn())
     │   ├── WeatherDetails.tsx    # 6 detail tiles; also named-export CompactWeatherDetails
     │   ├── WeatherIcon.tsx       # OWM icon-code → emoji map, ☀️ fallback
@@ -78,6 +80,7 @@ weather-app/
         ├── convertKelvinToCelcius.ts  # convertKtoC / convertKtoF (both Math.round now)
         ├── getDayOrNightIcon.tsx # swaps trailing d/n based on 06–18h window
         ├── metersToKilometers.ts # m → km string (toFixed(0))
+        ├── recentSearches.ts     # pushRecent/removePlace + MAX_RECENT_SEARCHES/MAX_SAVED_PLACES
         ├── safeFormat.ts         # safeFormat(dateStr, fmt) / safeFormatUnix(unix, fmt) → "N/A"
         └── speedInMpsToKmph.ts   # m/s → km/h string
 ```
