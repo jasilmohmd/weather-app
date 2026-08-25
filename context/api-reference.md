@@ -1,84 +1,80 @@
-# API Reference — OpenWeatherMap
+# API Reference
 
-All requests are made **client-side** with Axios. Base URL: `https://api.openweathermap.org`.
+Two-hop architecture since `feat/server-key-proxy`:
 
-Auth: `appid=${process.env.NEXT_PUBLIC_WEATHER_KEY}` appended to every URL.
+```
+Browser code ──► /api/* route handlers ──► api.openweathermap.org
+                    (injects private
+                     WEATHER_API_KEY)
+```
+
+The browser never sees the OWM key. All OWM traffic goes through our Next.js route handlers.
 
 ---
 
-## Endpoints Currently Used
+## Client-Facing Routes (`src/app/api/`)
 
-### 1. Forecast by city name (main data source)
+| Route | Params | Returns | Errors |
+|---|---|---|---|
+| `GET /api/forecast` | `city=<name>` **or** `lat=&lon=` | OWM forecast JSON (`WeatherResponse`) | `{ message }` w/ upstream status |
+| `GET /api/cities` | `q=<partial name>` | `{ list: City[] }` | same |
+| `GET /api/aqi` | `lat=&lon=` | OWM air-pollution JSON (`AirPollutionResponse`) | same |
 
-```
-GET /data/2.5/forecast?q={city}&appid={KEY}&cnt=56
-```
-- Called by: `getForecastByCity()` in `src/services/weatherApi.ts` (queryFn of `useWeather` hook)
-- `cnt=56` = 7 days × 8 three-hourly slots (API returns 5-day/3-hour by default; cnt caps it)
-- Response typed as `WeatherResponse` (interfaces live in `page.tsx:24-91`)
+- Validation: city ≤100 chars; lat within ±90, lon within ±180; missing/invalid → HTTP 400 `{ message }`.
+- Handlers live in `src/app/api/{forecast,cities,aqi}/route.ts`; shared helpers in `src/lib/apiHelpers.ts`.
+
+## Service Layer Mapping
+
+| Client fn (`services/weatherApi.ts`) | Calls | Server core (`services/owmServer.ts`) |
+|---|---|---|
+| `getForecastByCity(city)` | `/api/forecast?city=` | `fetchForecastByCity` → `/forecast?q=&cnt=56` |
+| `getForecastByCoords(lat, lon)` | `/api/forecast?lat&lon` | `fetchForecastByCoords` → `/forecast?lat&lon` |
+| `findCities(query)` | `/api/cities?q=` | `fetchCities` → `/find?q=` |
+| `getAirPollution(lat, lon)` | `/api/aqi?lat&lon` | `fetchAirPollution` → `/air_pollution?lat&lon` |
+
+Signatures are stable — hooks (`useWeather`, `useAqi`) and components import only the client fns.
+
+## Response Shapes
+
+### Forecast (`WeatherResponse`, full interfaces in `src/types/weather.ts`)
 
 ```ts
 interface WeatherResponse {
   cod: string; message: number; cnt: number;
-  list: WeatherEntry[];      // timestamped forecast slots
-  city: City;                // includes coord, country, timezone, sunrise, sunset (unix seconds)
+  list: WeatherEntry[];      // 3-hourly slots; free tier caps at 40 (5 days)
+  city: City;                // coord, country, timezone, sunrise/sunset (unix s)
 }
 interface WeatherEntry {
-  dt: number;                // unix seconds (UTC)
-  main: MainWeather;         // temp/feels_like/temp_min/max/pressure/humidity…  (Kelvin, hPa)
-  weather: WeatherDescription[]; // { id, main, description, icon } — icon like "10d"
-  clouds: Clouds; wind: Wind;
-  visibility: number;        // meters
-  pop: number;               // precipitation probability 0..1
-  sys: Sys;                  // pod: "d"|"n"
-  dt_txt: string;            // "YYYY-MM-DD HH:mm:ss" UTC
+  dt: number;                // unix seconds UTC
+  main: MainWeather;         // Kelvin temps, hPa pressure
+  weather: WeatherDescription[]; // icon like "10d"
+  wind: Wind; visibility: number; pop: number; sys: Sys; dt_txt: string;
 }
 ```
 
-### 2. City autocomplete
+Note: despite `cnt=56` being requested, the free tier returns max **40 entries** — UI slices account for this.
 
+### Air pollution (`AirPollutionResponse`)
+
+```ts
+{ list: [{ main: { aqi: 1|2|3|4|5 }, components: { co,no,no2,o3,so2,pm2_5,pm10,nh3 }, dt }] }
 ```
-GET /data/2.5/find?q={partialName}&appid={KEY}
-```
-- Called by: `findCities()` service from Navbar `handleInputChange()` when input length > 3
-- Only `response.data.list[].name` is used (mapped through the shared `City` type imported from `@/app/page`)
-- Debouncing: 300 ms with stale-response sequence guard (`feat/search-debounce-keyboard`) — keep this pattern when touching search
+AQI bands: 1 Good · 2 Fair · 3 Moderate · 4 Poor · 5 Very Poor. Coords come free from `forecast.city.coord`.
 
-### 3. Forecast by coordinates (geolocation flow)
+## Key Handling & Security
 
-```
-GET /data/2.5/forecast?lat={lat}&lon={lon}&appid={KEY}
-```
-- Called by: `getForecastByCoords()` service after `navigator.geolocation.getCurrentPosition`
-- Only `response.data.city.name` is used → written to `placeAtom` → triggers refetch by name
-
-## Key Handling & Security Notes
-
-1. `NEXT_PUBLIC_WEATHER_KEY` lives in `.env.local` (spaces around `=`, single-quoted). Because of the `NEXT_PUBLIC_` prefix it is **inlined into the client bundle** — anyone can extract it.
-2. ⚠️ The key is additionally hardcoded in a comment at `src/app/page.tsx:22`:
-   ```
-   // https://api.openweathermap.org/data/2.5/forecast?q=pune&appid=<LIVE_KEY_EXPOSED>&cnt=2
-   ```
-   Remove this line during refactor (tracked as known-issue S1). The key is already in git history — rotate it in the OWM dashboard regardless.
-3. There are **no Next.js route handlers / API routes**. A future hardening step would proxy OWM through a route handler using a private (non-public) env var so the key never reaches the browser.
-4. No `.env.example` exists yet — add one documenting `NEXT_PUBLIC_WEATHER_KEY=` (refactor spec step R8).
+1. `WEATHER_API_KEY` (no `NEXT_PUBLIC_` prefix) lives in `.env.local` and is read **only** in `owmServer.ts` via route handlers.
+2. Verified absent from client bundle: secret value, `api.openweathermap.org` host string, legacy env name (grep `.next/static` after builds when touching module boundaries).
+3. Legacy `NEXT_PUBLIC_WEATHER_KEY` was removed in `feat/server-key-proxy` — if an old `.env.local` still has it, migrate to `WEATHER_API_KEY=`.
+4. The old hardcoded-key incident (former S1) is cleaned from source; the value remains in git history — rotate if the repo was ever public.
 
 ## Rate Limits & Errors
 
-- Free tier: 60 calls/min, 1M calls/month. Autocomplete-per-keystroke is the main burn risk → add debouncing when touching search.
-- Error shape (axios): `{ cod, message }` e.g. `cod: "404", message: "city not found"`.
-- Units: all temperatures arrive in **Kelvin**; conversions happen client-side via `src/utils/convertKelvinToCelcius.ts`. You can alternatively request `&units=metric|imperial`, but the app's unit toggle expects Kelvin source data — keep Kelvin.
-
-## Planned Endpoints (not yet integrated)
-
-| Endpoint | Purpose | Spec |
-|---|---|---|
-| `GET /data/2.5/air_pollution?lat=&lon=&appid=` | AQI (1–5 scale) + pollutant concentrations | [`features/aqi-weather-maps.md`](./features/aqi-weather-maps.md) |
-
-Coords for AQI come free from the existing forecast response: `WeatherResponse.city.coord { lat, lon }`.
+- Free tier: 60 calls/min, 1M/month. Autocomplete is debounced 300 ms client-side; keep it that way.
+- Upstream errors pass through: handler returns upstream status + `{ message }` (e.g. 404 "city not found"), which Navbar's `axios.isAxiosError` narrowing renders.
+- Units stay **Kelvin** end-to-end; conversions happen client-side via utils.
 
 ## Type Ownership
 
-- OWM interfaces live in **`src/types/weather.ts`** (single source; moved out of the old page monolith). Components, services, and hooks import from `@/types/weather`.
-- All HTTP calls go through **`src/services/weatherApi.ts`** (axios instance, base URL `https://api.openweathermap.org/data/2.5`). New endpoints (e.g. AQI) belong there.
-- The main query is wrapped by **`src/hooks/useWeather.ts`** with `queryKey: ["weather", "forecast", place]`.
+- Interfaces: `src/types/weather.ts` (incl. `AirPollutionResponse`).
+- Server-only OWM access: `src/services/owmServer.ts` — never import from client code.

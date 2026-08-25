@@ -32,7 +32,7 @@ No `test` script exists.
 
 | Var | Where | Notes |
 |---|---|---|
-| `NEXT_PUBLIC_WEATHER_KEY` | `.env.local` | OpenWeatherMap key. `NEXT_PUBLIC_` prefix = shipped to browser by design. `.env*` is gitignored **except `.env.example`** (`!.env.example` negation). Copy it: `cp .env.example .env.local`. |
+| `WEATHER_API_KEY` | `.env.local` | OpenWeatherMap key, **private** (no `NEXT_PUBLIC_` prefix) — read only by `/api` route handlers via `services/owmServer.ts`; never shipped to the browser. `.env*` is gitignored **except `.env.example`**. Migrated from the old client-exposed `NEXT_PUBLIC_WEATHER_KEY`. |
 
 ## Full File Map
 
@@ -48,7 +48,11 @@ weather-app/
 ├── public/                       # stock create-next-app SVGs only
 └── src/
     ├── app/
-    │   ├── globals.css           # tailwind import + .scrollbar-hide / .pb-safe helpers
+    │   ├── api/                   # route handlers (only OWM entry point; key stays server-side)
+    │   │   ├── aqi/route.ts       # GET ?lat&lon → air pollution JSON
+    │   │   ├── cities/route.ts    # GET ?q → { list: City[] }
+    │   │   └── forecast/route.ts  # GET ?city= or ?lat&lon → WeatherResponse
+    │   ├── globals.css           # tailwind import + dark custom-variant + .scrollbar-hide / .pb-safe
     │   ├── layout.tsx            # SERVER component: Geist fonts + metadata + <Providers>
     │   ├── providers.tsx         # 'use client': QueryClientProvider (useState-created client)
     │   ├── page.tsx              # thin composition root (~80 lines): useWeather → sections
@@ -76,8 +80,11 @@ weather-app/
     ├── hooks/
     │   ├── useAqi.ts             # useQuery(["weather","aqi",lat,lon]) — enabled only with coords
     │   └── useWeather.ts         # useQuery(["weather","forecast",place]) wrapper
+    ├── lib/
+    │   └── apiHelpers.ts         # shared route-handler helpers (badRequest/toNumber/handleOwmError)
     ├── services/
-    │   └── weatherApi.ts         # axios instance + getForecastByCity/getForecastByCoords/findCities/getAirPollution
+    │   ├── owmServer.ts          # SERVER-ONLY OWM core (fetch* fns + private key)
+    │   └── weatherApi.ts         # CLIENT wrappers hitting /api/* (stable signatures)
     ├── types/
     │   └── weather.ts            # all OWM response interfaces incl. AirPollutionResponse
     └── utils/                    # camelCase plain-function modules

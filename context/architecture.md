@@ -8,28 +8,27 @@ This is a **client-side SPA-style app** running inside Next.js App Router. There
 
 ```
 User types in Searchbox (Navbar)
-        │  onChange → handleInputChange() → findCities() service (autocomplete)
-        │  onSubmit / suggestion click
-        ▼
-placeAtom updated
-        │
-        ▼
-useWeather(place) hook — queryKey ["weather","forecast", place]
-        │  queryFn: getForecastByCity(place)   ← services/weatherApi.ts
-        │  (place change = new key = automatic fetch; cached cities render instantly)
+        │  onChange → debounced handleInputChange() → findCities() ─┐
+        │  onSubmit / suggestion click                              │
+        ▼                                                           │
+placeAtom updated                                                   │
+        │                                                           ▼
+useWeather(place) hook — queryKey ["weather","forecast", place]   GET /api/cities
+        │  queryFn: getForecastByCity(place)  ← services/weatherApi.ts
+        │           └─► /api/forecast route ─► owmServer.ts (private key) ─► OWM
         ▼
 page.tsx derives nothing — passes data down:
-  • CurrentWeatherHero  gets list[0] + city
+  • CurrentWeatherHero  gets list[0] + city (+ AqiTile uses city.coord)
   • HourlyForecast      gets full list (slices 12 internally)
+  • ForecastCharts      gets full list (recharts)
   • DailyForecast       gets full list + city (dedupes dates, ≥6am rule internally)
-        │
+  • RadarMap            gets city.coord (lazy iframe on expand)
         ▼
-<Navbar> <WeatherDetails> <ForecastWeatherDetails> <WeatherIcon> <Footer>
+<Navbar> <PlacesBar> <WeatherDetails> <ForecastWeatherDetails> <WeatherIcon> <Footer>
 
 Loading: isPending → <WeatherSkeleton/> · Error: styled Container card
+API key never leaves the server — browser talks only to /api/*.
 ```
-
-Former anti-patterns (refetch-via-useEffect, artificial delays) are gone as of `refactor/foundation`.
 
 ## State Management
 
@@ -105,9 +104,10 @@ RootLayout (layout.tsx — SERVER component, exports metadata)
 
 | Layer | Pattern |
 |---|---|
-| Autocomplete (Navbar) | try/catch → `axios.isAxiosError(error)` narrowing → show `error.response.data?.message` in SuggestionBox |
+| Autocomplete (Navbar) | debounced; try/catch → `axios.isAxiosError(error)` narrowing → show `error.response.data?.message` in SuggestionBox |
 | Geolocation (Navbar) | error callback on `getCurrentPosition` + try/catch around coords fetch → surfaced via same `error` state |
 | Main query (page.tsx) | styled `Container` error card with message + retry hint |
+| `/api` routes | validate params → 400; upstream OWM errors mapped by `lib/apiHelpers.handleOwmError` to `{ message }` + status |
 | Dates | `safeFormat`/`safeFormatUnix` return `"N/A"` or `"Invalid date"` instead of throwing |
 
 ## Deliberate Quirks (do not "fix" casually)

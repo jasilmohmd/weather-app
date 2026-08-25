@@ -47,9 +47,9 @@ This folder is the **single source of truth** for humans and AI coding agents wo
 ```
 Stack        Next.js 15 (App Router) · React 19 · TypeScript 5 · Tailwind v4
 State        Jotai atoms (src/app/atom.ts) + TanStack Query v5
-HTTP         Axios, called directly from client components
-Weather data OpenWeatherMap (key in .env.local as NEXT_PUBLIC_WEATHER_KEY)
-Routes       Single route: "/" (src/app/page.tsx)
+HTTP         Axios → own /api routes → OpenWeatherMap (key private, server-side only)
+Weather data OpenWeatherMap via WEATHER_API_KEY in .env.local (never NEXT_PUBLIC_)
+Routes       "/" (src/app/page.tsx) + /api/forecast · /api/cities · /api/aqi
 Tests        None yet
 Run          npm run dev · Lint: npm run lint · Build: npm run build
 ```

@@ -21,7 +21,7 @@ Add a spec via [`TEMPLATE.md`](./features/TEMPLATE.md) before starting any of th
 
 - ~~Debounced autocomplete + keyboard-navigable suggestions~~ ✅ done — [`features/search-a11y.md`](./features/search-a11y.md)
 - Full ARIA combobox wiring on the search input (aria-expanded/activedescendant) — follow-up to search-a11y
-- Route-handler proxy hiding the OWM key server-side (S2)
+- ~~Route-handler proxy hiding the OWM key server-side~~ ✅ done — [`features/key-proxy.md`](./features/key-proxy.md); follow-up: proxy rate-limiting/caching
 - Hourly forecast expansion (24h+ with scroll snap)
 - i18n (date-fns locales already in tree)
 - PWA manifest + offline shell
@@ -40,3 +40,4 @@ Add a spec via [`TEMPLATE.md`](./features/TEMPLATE.md) before starting any of th
 | 2026-08-25 | `feat/dark-light-mode`: spec #3 implemented — class-based dark variant, per-condition gradients (light+dark), theme cycle button, FOUC script, persisted theme/units |
 | 2026-08-25 | `feat/aqi-weather-maps`: spec #4 implemented — AQI tile (Air Pollution API), recharts temp/precip trends, collapsible Windy radar embed |
 | 2026-08-25 | `feat/search-debounce-keyboard`: backlog item — 300 ms debounced autocomplete with stale guard, keyboard-accessible suggestions, a11y labels batch |
+| 2026-08-25 | `feat/server-key-proxy`: S2 resolved — /api route handlers + private WEATHER_API_KEY; client bundle verified key-free |

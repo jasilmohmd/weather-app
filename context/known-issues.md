@@ -1,6 +1,6 @@
 # Known Issues & Tech Debt
 
-> **2026-08-25 refactor update:** items B1–B5, A1–A5, T1–T4 and the source half of S1 were fixed on branch `refactor/foundation`; A6 and the ♿ accessibility batch on `feat/search-debounce-keyboard`. Entries below are kept for reference; headings marked ✅ are resolved. Still open: S2, T5–T9.
+> **2026-08-25 refactor update:** items B1–B5, A1–A5, T1–T4 and the source half of S1 were fixed on branch `refactor/foundation`; A6 and the ♿ accessibility batch on `feat/search-debounce-keyboard`; S2 on `feat/server-key-proxy`. Entries below are kept for reference; headings marked ✅ are resolved. Still open: T5–T9.
 
 Review date: 2026-08-25 @ commit `0f97960`. Line numbers refer to current source. Fix owners: any agent touching the relevant file should fix-and-check-off items marked 🔧; structural items are bundled into [`features/refactor-foundation.md`](./features/refactor-foundation.md).
 
@@ -58,8 +58,8 @@ const [queryClient] = useState(() => new QueryClient())
 ### S1 🔒 API key hardcoded in source comment
 `src/app/page.tsx:22` contains a full URL including the live key. Delete the line. Also verify the key isn't in git history (`git log -p | grep appid=`); rotate in OWM dashboard if it ever was public. Tracked as refactor step R8 alongside adding `.env.example`.
 
-### S2 🔒 Key ships to browser by design
-`NEXT_PUBLIC_WEATHER_KEY` is embedded in the client bundle. Acceptable short-term for a hobby app; long-term fix is a Next.js route handler proxy with a private key (optional hardening task, not scheduled).
+### S2 🔒 Key ships to browser by design — FIXED (feat/server-key-proxy)
+Resolved by routing all OWM traffic through `/api/*` route handlers with a private `WEATHER_API_KEY`; see [`features/key-proxy.md`](./features/key-proxy.md). Client bundle verified free of the key value, the OWM host string, and the legacy env name. Remaining optional hardening: proxy rate-limiting/caching.
 
 ## Tech Debt / Structure
 
