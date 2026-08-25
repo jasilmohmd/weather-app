@@ -1,5 +1,7 @@
 # Known Issues & Tech Debt
 
+> **2026-08-25 refactor update:** items B1–B5, A1–A5, T1–T4 and the source half of S1 were fixed on branch `refactor/foundation`. Entries below are kept for reference; headings marked ✅ are resolved. Still open: A6, S2, T5–T9, ♿ batch.
+
 Review date: 2026-08-25 @ commit `0f97960`. Line numbers refer to current source. Fix owners: any agent touching the relevant file should fix-and-check-off items marked 🔧; structural items are bundled into [`features/refactor-foundation.md`](./features/refactor-foundation.md).
 
 Legend: 🐛 user-visible bug · ⚠️ anti-pattern/degradation · 🔒 security · 🧹 hygiene · ♿ accessibility

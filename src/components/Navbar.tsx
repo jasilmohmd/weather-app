@@ -1,146 +1,240 @@
-'use client'
+'use client';
 
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react';
 import Searchbox from './Searchbox';
 import axios from 'axios';
 import { useAtom } from 'jotai';
-import { isCelsiusAtom, loadingCityAtom, placeAtom } from '@/app/atom';
-import { MapPin } from 'lucide-react';
+import { isCelsiusAtom, placeAtom, recentSearchesAtom, savedPlacesAtom } from '@/app/atom';
+import { MapPin, Star, Sun, Moon, Monitor } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
-import { City, WeatherEntry } from '@/app/page';
+import { City, WeatherEntry } from '@/types/weather';
+import { findCities, getForecastByCoords } from '@/services/weatherApi';
+import { MAX_SAVED_PLACES, pushRecent, removePlace } from '@/utils/recentSearches';
+import { Theme, themeAtom } from '@/app/atom';
+import { useI18n } from '@/hooks/useI18n';
 
-type Props = { location?: string, data?: WeatherEntry }
+type Props = { location?: string; data?: WeatherEntry };
 
 export default function Navbar({ location, data }: Props) {
-
-  const API_KEY = process.env.NEXT_PUBLIC_WEATHER_KEY
-
-  const [city, setCity] = useState("");
-  const [error, setError] = useState("");
+  const [city, setCity] = useState('');
+  const [error, setError] = useState('');
   //
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestion] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
   //
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const requestSeqRef = useRef(0);
   const [, setPlace] = useAtom(placeAtom);
-  const [, setLoadingCity] = useAtom(loadingCityAtom);
+  const [savedPlaces, setSavedPlaces] = useAtom(savedPlacesAtom);
+  const [recentSearches, setRecentSearches] = useAtom(recentSearchesAtom);
   const [isCelsius, setIsCelsius] = useAtom(isCelsiusAtom);
+  const [theme, setTheme] = useAtom(themeAtom);
+  const { locale, toggleLocale, nextLocaleLabel, t, dateLocale } = useI18n();
 
+  const nextTheme: Theme = theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light';
 
-  async function handleInputChange(value: string) {
-    setCity(value);
-    if (value.length > 3) {
-      try {
+  const isPinned = location ? savedPlaces.includes(location) : false;
 
-        const response = await axios.get(
-          `https://api.openweathermap.org/data/2.5/find?q=${value}&appid=${API_KEY}`
-        );
+  function selectPlace(name: string) {
+    setPlace(name);
+    setRecentSearches(pushRecent(recentSearches, name));
+  }
 
-        const suggestions = response.data.list.map((item: City) => item.name);
-        setSuggestions(suggestions);
-        setError("");
-        setShowSuggestion(true);
-
-      } catch (error:unknown) {
-        if (axios.isAxiosError(error) && error.response) {
-          setError(error.response.data?.message || "Failed to fetch suggestions.");
-        } else if (error instanceof Error) {
-          setError(error.message);
-        } else {
-          setError("An unexpected error occurred.");
-        }
-        setSuggestions([]);
-        setShowSuggestion(false);
-      }
+  function togglePin() {
+    if (!location) return;
+    if (savedPlaces.includes(location)) {
+      setSavedPlaces(removePlace(savedPlaces, location));
+    } else {
+      setSavedPlaces([location, ...savedPlaces].slice(0, MAX_SAVED_PLACES));
     }
-    else {
+  }
+
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, []);
+
+  async function fetchSuggestions(value: string) {
+    const seq = ++requestSeqRef.current;
+    try {
+      const cities = await findCities(value);
+      if (seq !== requestSeqRef.current) return;
+
+      setSuggestions(cities.map((item: City) => item.name));
+      setError('');
+      setShowSuggestion(true);
+      setActiveIndex(-1);
+    } catch (error: unknown) {
+      if (seq !== requestSeqRef.current) return;
+      if (axios.isAxiosError(error) && error.response) {
+        setError(error.response.data?.message || 'Failed to fetch suggestions.');
+      } else if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('An unexpected error occurred.');
+      }
       setSuggestions([]);
       setShowSuggestion(false);
+    }
+  }
+
+  function handleInputChange(value: string) {
+    setCity(value);
+    setActiveIndex(-1);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (value.length > 3) {
+      debounceRef.current = setTimeout(() => {
+        void fetchSuggestions(value);
+      }, 300);
+    } else {
+      requestSeqRef.current++;
+      setSuggestions([]);
+      setShowSuggestion(false);
+      setError('');
     }
   }
 
   function handleSuggestionClick(value: string) {
     setCity(value);
     setShowSuggestion(false);
+    setActiveIndex(-1);
   }
 
   function handleCurrentLocation() {
+    if (!navigator.geolocation) {
+      setError('Geolocation is not supported by your browser.');
+      return;
+    }
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(async (position) => {
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
         const { latitude, longitude } = position.coords;
 
         try {
-          setLoadingCity(true);
-
-          const response = await axios.get(
-            `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${API_KEY}`
-          );
-
-          setTimeout(() => {
-            setPlace(response.data.city.name);
-            setLoadingCity(false);
-          }, 1000);
-
-        } catch (error) {
-          setLoadingCity(false);
-          console.log(error);
+          const response = await getForecastByCoords(latitude, longitude);
+          selectPlace(response.city.name);
+        } catch (error: unknown) {
+          if (axios.isAxiosError(error) && error.response) {
+            setError(error.response.data?.message || 'Failed to load your location weather.');
+          } else if (error instanceof Error) {
+            setError(error.message);
+          } else {
+            setError('An unexpected error occurred.');
+          }
         }
-
-      })
-    }
-
+      },
+      () => {
+        setError('Unable to retrieve your location. Check location permissions.');
+      }
+    );
   }
 
   function handleSubmitSearch(e: React.FormEvent<HTMLFormElement>) {
-
-    setLoadingCity(true);
     e.preventDefault();
 
     if (suggestions.length < 1) {
-      setError("Location not found");
-      setLoadingCity(false);
+      setError(t.nav.locationNotFound);
+    } else {
+      setError('');
+      selectPlace(city);
+      setShowSuggestion(false);
     }
-    else {
-      setError("");
-      setTimeout(() => {
-        setPlace(city);
-        setShowSuggestion(false);
-        setLoadingCity(false);
-      }, 1000);
-    }
+  }
 
+  function handleSearchKeyDown(e: React.KeyboardEvent) {
+    if (!showSuggestions || suggestions.length < 1) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setActiveIndex((i) => (i + 1) % suggestions.length);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setActiveIndex((i) => (i <= 0 ? suggestions.length - 1 : i - 1));
+    } else if (e.key === 'Enter' && activeIndex >= 0) {
+      e.preventDefault();
+      const item = suggestions[activeIndex];
+      if (item) {
+        setCity(item);
+        selectPlace(item);
+        setShowSuggestion(false);
+        setActiveIndex(-1);
+      }
+    } else if (e.key === 'Escape') {
+      setShowSuggestion(false);
+      setActiveIndex(-1);
+    }
   }
 
   return (
-
     <>
       <nav className="bg-transparent backdrop-blur-sm my-4">
-        <div className='h-[70px] w-full flex justify-between items-center max-w-7xl px-3 mx-auto'>
-
+        <div className="h-[70px] w-full flex justify-between items-center max-w-7xl px-3 mx-auto">
           <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-between gap-16">
-
-            <button className="p-2 hover:bg-white/10 rounded-full transition-colors duration-200" onClick={handleCurrentLocation} title='Your Current Location'>
+            <button
+              className="p-2 hover:bg-white/10 rounded-full transition-colors duration-200"
+              onClick={handleCurrentLocation}
+              aria-label={t.nav.currentLocationAria}
+              title={t.nav.currentLocationTitle}
+            >
               <MapPin className="w-6 h-6 text-white/80" />
             </button>
 
             <div className="text-center">
               <h1 className="text-white font-light text-lg tracking-wide">{location}</h1>
               <p className="text-white/60 text-sm font-light">
-                {format(parseISO(data?.dt_txt ?? ""), "EEEE")}, {format(parseISO(data?.dt_txt ?? ""), "MMMM dd")}
+                {format(parseISO(data?.dt_txt ?? ''), 'EEEE', { locale: dateLocale })},{' '}
+                {format(parseISO(data?.dt_txt ?? ''), 'MMMM dd', { locale: dateLocale })}
               </p>
             </div>
             <button
               onClick={() => setIsCelsius(!isCelsius)}
+              aria-label={isCelsius ? t.nav.switchToFahrenheit : t.nav.switchToCelsius}
+              title={`°${isCelsius ? 'F' : 'C'}`}
               className="text-white/80 font-light text-sm px-2 py-1 hover:bg-white/10 rounded-full transition-colors duration-200"
             >
               °{isCelsius ? 'C' : 'F'}
             </button>
+
+            <button
+              onClick={togglePin}
+              disabled={!location}
+              aria-label={isPinned ? t.nav.unpinCity : t.nav.pinCity}
+              title={isPinned ? t.nav.unpinCity : t.nav.pinCity}
+              className="p-2 hover:bg-white/10 rounded-full transition-colors duration-200 disabled:opacity-40"
+            >
+              <Star className="w-5 h-5 text-white/80" fill={isPinned ? 'currentColor' : 'none'} />
+            </button>
+
+            <button
+              onClick={() => setTheme(nextTheme)}
+              aria-label={`Theme: ${theme}. Switch to ${nextTheme}`}
+              title={`Theme: ${theme}`}
+              className="p-2 hover:bg-white/10 rounded-full transition-colors duration-200"
+            >
+              {theme === 'light' ? (
+                <Sun className="w-5 h-5 text-white/80" />
+              ) : theme === 'dark' ? (
+                <Moon className="w-5 h-5 text-white/80" />
+              ) : (
+                <Monitor className="w-5 h-5 text-white/80" />
+              )}
+            </button>
+
+            <button
+              onClick={toggleLocale}
+              aria-label={t.nav.languageAria(nextLocaleLabel)}
+              title={nextLocaleLabel}
+              className="p-2 hover:bg-white/10 rounded-full transition-colors duration-200 text-white/80 font-light text-sm"
+            >
+              {locale === 'en' ? 'ع' : 'EN'}
+            </button>
           </div>
 
           {/*  */}
-          <section className="ml-auto flex gap-2 items-center">
-
-            <div className='relative hidden md:flex'>
+          <section className="ms-auto flex gap-2 items-center">
+            <div className="relative hidden md:flex" onKeyDown={handleSearchKeyDown}>
               {/* Search box */}
               <Searchbox
                 value={city}
@@ -152,18 +246,17 @@ export default function Navbar({ location, data }: Props) {
                   showSuggestions,
                   suggestions,
                   handleSuggestionClick,
-                  error
+                  error,
+                  activeIndex,
                 }}
               />
             </div>
-
           </section>
-
         </div>
       </nav>
 
-      <section className='flex max-w-7xl px-3 md:hidden justify-center'>
-        <div className='relative'>
+      <section className="flex max-w-7xl px-3 md:hidden justify-center">
+        <div className="relative" onKeyDown={handleSearchKeyDown}>
           {/* Search box */}
           <Searchbox
             value={city}
@@ -175,47 +268,59 @@ export default function Navbar({ location, data }: Props) {
               showSuggestions,
               suggestions,
               handleSuggestionClick,
-              error
+              error,
+              activeIndex,
             }}
           />
         </div>
       </section>
-
     </>
-
-  )
+  );
 }
-
 
 function SuggestionBox({
   showSuggestions,
   suggestions,
   handleSuggestionClick,
-  error
+  error,
+  activeIndex,
 }: {
   showSuggestions: boolean;
   suggestions: string[];
   handleSuggestionClick: (item: string) => void;
   error: string;
+  activeIndex: number;
 }) {
+  const { t } = useI18n();
+
   return (
     <>
-      {((showSuggestions && suggestions.length > 1) || error) && (
-        <ul className='mb-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl text-white absolute top-[50px] left-0 min-w-[200px] flex flex-col gap-1 p-1 z-50'>
+      {((showSuggestions && suggestions.length >= 1) || error) && (
+        <ul
+          role="listbox"
+          aria-label={t.nav.citySuggestions}
+          className="mb-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl text-white absolute top-[50px] start-0 min-w-[200px] flex flex-col gap-1 p-1 z-50"
+        >
           {error && suggestions.length < 1 && (
-            <li className='text-red-500 p-1'>{error}</li>
+            <li role="alert" className="text-red-500 p-1">
+              {error}
+            </li>
           )}
           {suggestions.map((item, i) => (
-            <li
-              key={i}
-              onClick={() => handleSuggestionClick(item)}
-              className='cursor-pointer p-2 hover:bg-gray-200/20 rounded-xl'
-            >
-              {item}
+            <li key={`${item}-${i}`} role="option" aria-selected={i === activeIndex}>
+              <button
+                type="button"
+                onClick={() => handleSuggestionClick(item)}
+                className={`w-full text-start cursor-pointer p-2 rounded-xl transition-colors ${
+                  i === activeIndex ? 'bg-gray-200/20' : 'hover:bg-gray-200/20'
+                }`}
+              >
+                {item}
+              </button>
             </li>
           ))}
         </ul>
       )}
     </>
-  )
+  );
 }

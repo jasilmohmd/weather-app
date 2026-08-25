@@ -13,7 +13,7 @@ Auth: `appid=${process.env.NEXT_PUBLIC_WEATHER_KEY}` appended to every URL.
 ```
 GET /data/2.5/forecast?q={city}&appid={KEY}&cnt=56
 ```
-- Called in: `src/app/page.tsx:105` (queryFn of the only useQuery)
+- Called by: `getForecastByCity()` in `src/services/weatherApi.ts` (queryFn of `useWeather` hook)
 - `cnt=56` = 7 days × 8 three-hourly slots (API returns 5-day/3-hour by default; cnt caps it)
 - Response typed as `WeatherResponse` (interfaces live in `page.tsx:24-91`)
 
@@ -40,7 +40,7 @@ interface WeatherEntry {
 ```
 GET /data/2.5/find?q={partialName}&appid={KEY}
 ```
-- Called in: `src/components/Navbar.tsx:35` from `handleInputChange()` when input length > 3
+- Called by: `findCities()` service from Navbar `handleInputChange()` when input length > 3
 - Only `response.data.list[].name` is used (mapped through the shared `City` type imported from `@/app/page`)
 - Debouncing: none — fires per keystroke past 3 chars
 
@@ -49,7 +49,7 @@ GET /data/2.5/find?q={partialName}&appid={KEY}
 ```
 GET /data/2.5/forecast?lat={lat}&lon={lon}&appid={KEY}
 ```
-- Called in: `src/components/Navbar.tsx:76` after `navigator.geolocation.getCurrentPosition`
+- Called by: `getForecastByCoords()` service after `navigator.geolocation.getCurrentPosition`
 - Only `response.data.city.name` is used → written to `placeAtom` → triggers refetch by name
 
 ## Key Handling & Security Notes
@@ -77,7 +77,8 @@ GET /data/2.5/forecast?lat={lat}&lon={lon}&appid={KEY}
 
 Coords for AQI come free from the existing forecast response: `WeatherResponse.city.coord { lat, lon }`.
 
-## Type Ownership (current vs target)
+## Type Ownership
 
-- **Now:** OWM interfaces are exported from `src/app/page.tsx` and imported elsewhere (e.g. `Navbar.tsx:10` does `import { City, WeatherEntry } from '@/app/page'`). Importing types from a page file is fragile — pages get recompiled/restructured often.
-- **Target (after refactor spec):** `src/types/weather.ts` owns them; page/components/services import from there.
+- OWM interfaces live in **`src/types/weather.ts`** (single source; moved out of the old page monolith). Components, services, and hooks import from `@/types/weather`.
+- All HTTP calls go through **`src/services/weatherApi.ts`** (axios instance, base URL `https://api.openweathermap.org/data/2.5`). New endpoints (e.g. AQI) belong there.
+- The main query is wrapped by **`src/hooks/useWeather.ts`** with `queryKey: ["weather", "forecast", place]`.
