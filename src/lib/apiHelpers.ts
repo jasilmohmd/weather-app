@@ -1,5 +1,5 @@
-import axios from "axios";
-import { NextResponse } from "next/server";
+import axios from 'axios';
+import { NextResponse } from 'next/server';
 
 export function badRequest(message: string) {
   return NextResponse.json({ message }, { status: 400 });
@@ -17,10 +17,10 @@ export async function handleOwmError(error: unknown) {
     const status = error.response?.status ?? 502;
     const data = error.response?.data as { message?: string } | undefined;
     return NextResponse.json(
-      { message: data?.message || "Upstream weather service error" },
+      { message: data?.message || 'Upstream weather service error' },
       { status }
     );
   }
-  console.error("[api] unexpected error:", error);
-  return NextResponse.json({ message: "Unexpected server error" }, { status: 500 });
+  console.error('[api] unexpected error:', error);
+  return NextResponse.json({ message: 'Unexpected server error' }, { status: 500 });
 }

@@ -3,7 +3,6 @@ export default function WeatherSkeleton() {
     <main className="px-3 max-w-7xl mx-auto flex flex-col gap-6 w-full pb-10 pt-4">
       {/* Today data skeleton */}
       <section className="space-y-4">
-
         {/* Main Weather Card Skeleton */}
         <div className="flex justify-center">
           <div className="flex flex-col">
@@ -36,7 +35,10 @@ export default function WeatherSkeleton() {
         {/* Weather Details Grid Skeleton */}
         <div className="grid grid-cols-2 gap-4 pb-safe">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="bg-white/10 backdrop-blur-3xl border border-white/20 rounded-3xl shadow-2xl p-6 flex items-center space-x-4 animate-pulse">
+            <div
+              key={i}
+              className="bg-white/10 backdrop-blur-3xl border border-white/20 rounded-3xl shadow-2xl p-6 flex items-center space-x-4 animate-pulse"
+            >
               <div className="p-3 bg-white/20 rounded-full">
                 <div className="w-5 h-5 bg-white/30 rounded"></div>
               </div>
@@ -53,7 +55,10 @@ export default function WeatherSkeleton() {
           <div className="h-6 w-16 bg-white/20 rounded animate-pulse mb-4"></div>
           <div className="flex space-x-6 overflow-x-auto scrollbar-hide pb-2">
             {Array.from({ length: 12 }).map((_, i) => (
-              <div key={i} className="flex-shrink-0 text-center space-y-3 min-w-[60px] animate-pulse">
+              <div
+                key={i}
+                className="flex-shrink-0 text-center space-y-3 min-w-[60px] animate-pulse"
+              >
                 <div className="h-4 w-12 bg-white/20 rounded mx-auto"></div>
                 <div className="w-8 h-8 bg-white/20 rounded-full mx-auto"></div>
                 <div className="h-6 w-10 bg-white/20 rounded mx-auto"></div>

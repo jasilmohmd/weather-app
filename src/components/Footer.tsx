@@ -12,12 +12,10 @@ export default function Footer() {
               <Cloud className="w-5 h-5 text-white/60" />
               <span className="text-white/60 font-light text-sm tracking-wide">WeatherApp</span>
             </div>
-            
+
             {/* Credits */}
             <div className="text-center space-y-1">
-              <p className="text-white/40 text-xs font-light">
-                Powered by OpenWeatherMap API
-              </p>
+              <p className="text-white/40 text-xs font-light">Powered by OpenWeatherMap API</p>
               <p className="text-white/30 text-xs font-light">
                 Made with 🤍 for weather enthusiasts
               </p>

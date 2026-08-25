@@ -1,30 +1,30 @@
-'use client'
+'use client';
 
-import { useAqi } from "@/hooks/useAqi";
-import Container from "./Container";
-import type { AirPollutionEntry } from "@/types/weather";
+import { useAqi } from '@/hooks/useAqi';
+import Container from './Container';
+import type { AirPollutionEntry } from '@/types/weather';
 
 const AQI_LEVELS: Record<number, { label: string; dot: string }> = {
-  1: { label: "Good", dot: "bg-green-400" },
-  2: { label: "Fair", dot: "bg-yellow-300" },
-  3: { label: "Moderate", dot: "bg-orange-400" },
-  4: { label: "Poor", dot: "bg-red-500" },
-  5: { label: "Very Poor", dot: "bg-purple-500" },
+  1: { label: 'Good', dot: 'bg-green-400' },
+  2: { label: 'Fair', dot: 'bg-yellow-300' },
+  3: { label: 'Moderate', dot: 'bg-orange-400' },
+  4: { label: 'Poor', dot: 'bg-red-500' },
+  5: { label: 'Very Poor', dot: 'bg-purple-500' },
 };
 
 const POLLUTANT_LABELS: Record<string, string> = {
-  pm2_5: "PM2.5",
-  pm10: "PM10",
-  o3: "O3",
-  no2: "NO2",
-  so2: "SO2",
+  pm2_5: 'PM2.5',
+  pm10: 'PM10',
+  o3: 'O3',
+  no2: 'NO2',
+  so2: 'SO2',
 };
 
-function dominantPollutant(components: AirPollutionEntry["components"]): string | null {
+function dominantPollutant(components: AirPollutionEntry['components']): string | null {
   let best: string | null = null;
   let max = -1;
   for (const key of Object.keys(POLLUTANT_LABELS)) {
-    const value = components[key as keyof AirPollutionEntry["components"]] ?? 0;
+    const value = components[key as keyof AirPollutionEntry['components']] ?? 0;
     if (value > max) {
       max = value;
       best = key;
@@ -41,7 +41,7 @@ interface AqiTileProps {
 export default function AqiTile({ lat, lon }: AqiTileProps) {
   const { data, isPending } = useAqi(lat, lon);
 
-  if (typeof lat !== "number" || typeof lon !== "number") return null;
+  if (typeof lat !== 'number' || typeof lon !== 'number') return null;
 
   if (isPending) {
     return (

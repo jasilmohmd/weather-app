@@ -1,6 +1,6 @@
 # Known Issues & Tech Debt
 
-> **2026-08-25 update:** B1–B5, A1–A5, T1–T4 + S1-source fixed on `refactor/foundation`; A6 + ♿ batch on `feat/search-debounce-keyboard`; S2 on `feat/server-key-proxy`; T5–T8 on `chore/hygiene-t5-t8`. Entries kept for reference; ✅ headings are resolved. Still open: **T9 only** (tests, error boundary file, Prettier).
+> **2026-08-25 update:** B1–B5, A1–A5, T1–T4 + S1-source fixed on `refactor/foundation`; A6 + ♿ batch on `feat/search-debounce-keyboard`; S2 on `feat/server-key-proxy`; T5–T8 on `chore/hygiene-t5-t8`; tests on `chore/test-suite`; **T9 fully closed** (error boundaries + Prettier) on `chore/error-boundaries-prettier`. Entries kept for reference; ✅ headings are resolved. **Ledger is clean — no open items.** Remaining ideas live in the roadmap backlog.
 
 Review date: 2026-08-25 @ commit `0f97960`. Line numbers refer to current source. Fix owners: any agent touching the relevant file should fix-and-check-off items marked 🔧; structural items are bundled into [`features/refactor-foundation.md`](./features/refactor-foundation.md).
 
@@ -91,8 +91,10 @@ Decision made: keep emoji icons (now a11y-labeled). The unused `images.remotePat
 - `metersToKilometers.ts` local `Kilometers` → `kilometers`
 All imports repointed; grep-clean.
 
-### T9 🧹 No error boundary / no Prettier — PARTIALLY RESOLVED
-✅ Test suite landed (`chore/test-suite`): Vitest 4 + React Testing Library + jsdom; 39 tests across utils and WeatherIcon (`npm test`). Still open: no `error.tsx`/`not-found.tsx` route boundaries, no Prettier/formatter config.
+### T9 ✅🧹 Tests / error boundary / Prettier — FULLY RESOLVED
+- ✅ Test suite (`chore/test-suite`): Vitest 4 + RTL + jsdom; 39 tests (`npm test`)
+- ✅ Route boundaries (`chore/error-boundaries-prettier`): `src/app/error.tsx` (client boundary w/ retry + digest) and `src/app/not-found.tsx` (404 page)
+- ✅ Prettier 3: `.prettierrc` (singleQuote, printWidth 100, es5 commas), `.prettierignore` excludes md/.next/lockfile; `npm run format` / `format:check`; repo formatted once in the same PR
 
 ### A6 ✅⚠️ Autocomplete fires per keystroke — FIXED
 300 ms debounce + stale-response sequence guard + unmount cleanup in `Navbar.tsx`. See `features/search-a11y.md`.

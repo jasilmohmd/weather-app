@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
@@ -12,7 +12,7 @@ interface RadarMapProps {
 export default function RadarMap({ lat, lon }: RadarMapProps) {
   const [open, setOpen] = useState(false);
 
-  if (typeof lat !== "number" || typeof lon !== "number") return null;
+  if (typeof lat !== 'number' || typeof lon !== 'number') return null;
 
   return (
     <Container className="p-4">
@@ -24,7 +24,7 @@ export default function RadarMap({ lat, lon }: RadarMapProps) {
       >
         Radar
         <ChevronDown
-          className={`w-5 h-5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          className={`w-5 h-5 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
           aria-hidden="true"
         />
       </button>

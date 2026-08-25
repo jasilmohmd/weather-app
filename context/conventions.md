@@ -60,10 +60,15 @@ Follow these when writing any code in this repo. When existing code and this doc
 - RTL: call `afterEach(cleanup)` when a file renders components (auto-cleanup needs globals, which are off).
 - Test pure utils directly; component tests render and assert roles/labels/text. Keep network-dependent components for later with mocked services.
 
+## Formatting
+
+- Prettier 3 is the formatter: single quotes, semicolons, width 100, ES5 trailing commas (`.prettierrc`). Markdown/context docs are ignored — keep them hand-crafted.
+- Run `npm run format` before committing (or `npm run format:check` to verify). CI-style order per PR: `npm test && npm run lint && npm run build`.
+
 ## Error Handling
 
-- Network calls: try/catch; narrow with `axios.isAxiosError`; surface messages to UI (see Navbar SuggestionBox error rendering) — do NOT just `console.log`.
-- Render-level errors: currently unhandled (no `error.tsx`). Adding one is part of refactor spec R9.
+- Network calls: try/catch; narrow with `axios.isAxiosError`; surface messages to UI — do NOT just `console.log`.
+- Route-level failures render `src/app/error.tsx` (client boundary w/ retry); unknown URLs hit `src/app/not-found.tsx`. Keep both styled to match the glass aesthetic.
 
 ## Do / Don't
 

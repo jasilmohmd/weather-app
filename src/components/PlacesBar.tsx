@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
@@ -65,7 +65,10 @@ export default function PlacesBar() {
         {savedPlaces.length > 0 && recentSearches.length > 0 && (
           <span className="w-px h-4 bg-white/20 flex-shrink-0" aria-hidden="true" />
         )}
-        {renderChips(recentSearches.filter((name) => !savedPlaces.includes(name)), false)}
+        {renderChips(
+          recentSearches.filter((name) => !savedPlaces.includes(name)),
+          false
+        )}
       </div>
     </section>
   );

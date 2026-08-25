@@ -1,4 +1,4 @@
-export function convertSpeed ( speedInMps: number ): string {
+export function convertSpeed(speedInMps: number): string {
   const speedInKmph = speedInMps * 3.6;
-  return `${speedInKmph.toFixed(0)}`
+  return `${speedInKmph.toFixed(0)}`;
 }

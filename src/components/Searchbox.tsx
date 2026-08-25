@@ -1,26 +1,23 @@
 import { cn } from '@/utils/cn';
-import React from 'react'
-import { Search } from 'lucide-react'
+import React from 'react';
+import { Search } from 'lucide-react';
 
 type Props = {
-  className?: string
+  className?: string;
   value: string;
   onChange: React.ChangeEventHandler<HTMLInputElement> | undefined;
   onSubmit: React.FormEventHandler<HTMLFormElement> | undefined;
-}
+};
 
 export default function Searchbox(props: Props) {
   return (
-    <form 
-      className={cn(
-        'flex relative items-center justify-center h-10',
-        props.className
-      )} 
+    <form
+      className={cn('flex relative items-center justify-center h-10', props.className)}
       onSubmit={props.onSubmit}
     >
       <input
         type="text"
-        placeholder='Search location...'
+        placeholder="Search location..."
         aria-label="Search location"
         value={props.value}
         className="w-64 px-4 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all duration-300"

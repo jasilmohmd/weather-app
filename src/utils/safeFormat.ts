@@ -1,10 +1,10 @@
-import { format, fromUnixTime, parseISO } from "date-fns";
+import { format, fromUnixTime, parseISO } from 'date-fns';
 
 export function safeFormat(dateStr: string | undefined, formatStr: string) {
   try {
-    return dateStr ? format(parseISO(dateStr), formatStr) : "N/A";
+    return dateStr ? format(parseISO(dateStr), formatStr) : 'N/A';
   } catch {
-    return "Invalid date";
+    return 'Invalid date';
   }
 }
 

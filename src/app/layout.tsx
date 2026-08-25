@@ -1,22 +1,22 @@
-import { Geist, Geist_Mono } from "next/font/google";
-import type { Metadata } from "next";
-import Providers from "./providers";
-import ThemeSync from "@/components/ThemeSync";
-import "./globals.css";
+import { Geist, Geist_Mono } from 'next/font/google';
+import type { Metadata } from 'next';
+import Providers from './providers';
+import ThemeSync from '@/components/ThemeSync';
+import './globals.css';
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: "Weather App",
-  description: "Real-time weather forecasts powered by OpenWeatherMap",
+  title: 'Weather App',
+  description: 'Real-time weather forecasts powered by OpenWeatherMap',
 };
 
 // Applies the persisted theme before first paint to prevent a flash of the wrong theme.
@@ -39,9 +39,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <Providers>
           <ThemeSync />

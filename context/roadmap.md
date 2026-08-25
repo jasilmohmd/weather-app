@@ -43,3 +43,4 @@ Add a spec via [`TEMPLATE.md`](./features/TEMPLATE.md) before starting any of th
 | 2026-08-25 | `feat/server-key-proxy`: S2 resolved — /api route handlers + private WEATHER_API_KEY; client bundle verified key-free |
 | 2026-08-25 | `chore/hygiene-t5-t8`: T5–T8 resolved — lucide-only icons (react-icons dropped), ESM next.config, utils renamed per filename==export convention |
 | 2026-08-25 | `chore/test-suite`: Vitest 4 + RTL + jsdom wired with @ alias; 39 tests over utils + WeatherIcon; `npm test` / `npm run test:watch` |
+| 2026-08-25 | `chore/error-boundaries-prettier`: T9 fully closed — error.tsx + not-found.tsx route boundaries; Prettier 3 configured and repo formatted |
