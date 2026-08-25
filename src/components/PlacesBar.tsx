@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
@@ -6,12 +6,14 @@ import { Star, X } from 'lucide-react';
 import { placeAtom, recentSearchesAtom, savedPlacesAtom } from '@/app/atom';
 import { removePlace } from '@/utils/recentSearches';
 import { cn } from '@/utils/cn';
+import { useI18n } from '@/hooks/useI18n';
 
 export default function PlacesBar() {
   const [place, setPlace] = useAtom(placeAtom);
   const [savedPlaces, setSavedPlaces] = useAtom(savedPlacesAtom);
   const [recentSearches, setRecentSearches] = useAtom(recentSearchesAtom);
 
+  const { t } = useI18n();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
@@ -32,7 +34,7 @@ export default function PlacesBar() {
       >
         <button
           onClick={() => setPlace(name)}
-          aria-label={`Switch to ${name}`}
+          aria-label={t.places.switchTo(name)}
           aria-pressed={name === place}
           className="flex items-center gap-1.5 pl-3 pr-2 py-1.5 text-sm font-light text-white/90"
         >
@@ -49,7 +51,9 @@ export default function PlacesBar() {
               ? setSavedPlaces(removePlace(savedPlaces, name))
               : setRecentSearches(removePlace(recentSearches, name))
           }
-          aria-label={`Remove ${name} from ${isSaved ? 'favorites' : 'recents'}`}
+          aria-label={
+            isSaved ? t.places.removeFromFavorites(name) : t.places.removeFromRecents(name)
+          }
           className="p-1.5 pr-2.5 text-white/50 hover:text-white transition-colors"
         >
           <X className="w-3.5 h-3.5" aria-hidden="true" />
@@ -65,7 +69,10 @@ export default function PlacesBar() {
         {savedPlaces.length > 0 && recentSearches.length > 0 && (
           <span className="w-px h-4 bg-white/20 flex-shrink-0" aria-hidden="true" />
         )}
-        {renderChips(recentSearches.filter((name) => !savedPlaces.includes(name)), false)}
+        {renderChips(
+          recentSearches.filter((name) => !savedPlaces.includes(name)),
+          false
+        )}
       </div>
     </section>
   );

@@ -1,5 +1,5 @@
-module.exports = {
-  images: {
-    remotePatterns: [new URL('https://openweathermap.org/**')],
-  },
-}
+import type { NextConfig } from 'next';
+
+const nextConfig: NextConfig = {};
+
+export default nextConfig;
