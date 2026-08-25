@@ -4,16 +4,15 @@ import React, { useState } from 'react'
 import Searchbox from './Searchbox';
 import axios from 'axios';
 import { useAtom } from 'jotai';
-import { isCelsiusAtom, loadingCityAtom, placeAtom } from '@/app/atom';
+import { isCelsiusAtom, placeAtom } from '@/app/atom';
 import { MapPin } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
-import { City, WeatherEntry } from '@/app/page';
+import { City, WeatherEntry } from '@/types/weather';
+import { findCities, getForecastByCoords } from '@/services/weatherApi';
 
 type Props = { location?: string, data?: WeatherEntry }
 
 export default function Navbar({ location, data }: Props) {
-
-  const API_KEY = process.env.NEXT_PUBLIC_WEATHER_KEY
 
   const [city, setCity] = useState("");
   const [error, setError] = useState("");
@@ -22,7 +21,6 @@ export default function Navbar({ location, data }: Props) {
   const [showSuggestions, setShowSuggestion] = useState(false);
   //
   const [, setPlace] = useAtom(placeAtom);
-  const [, setLoadingCity] = useAtom(loadingCityAtom);
   const [isCelsius, setIsCelsius] = useAtom(isCelsiusAtom);
 
 
@@ -30,13 +28,9 @@ export default function Navbar({ location, data }: Props) {
     setCity(value);
     if (value.length > 3) {
       try {
+        const cities = await findCities(value);
 
-        const response = await axios.get(
-          `https://api.openweathermap.org/data/2.5/find?q=${value}&appid=${API_KEY}`
-        );
-
-        const suggestions = response.data.list.map((item: City) => item.name);
-        setSuggestions(suggestions);
+        setSuggestions(cities.map((item: City) => item.name));
         setError("");
         setShowSuggestion(true);
 
@@ -65,48 +59,46 @@ export default function Navbar({ location, data }: Props) {
 
   function handleCurrentLocation() {
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(async (position) => {
+    if (!navigator.geolocation) {
+      setError("Geolocation is not supported by your browser.");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
         const { latitude, longitude } = position.coords;
 
         try {
-          setLoadingCity(true);
-
-          const response = await axios.get(
-            `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${API_KEY}`
-          );
-
-          setTimeout(() => {
-            setPlace(response.data.city.name);
-            setLoadingCity(false);
-          }, 1000);
-
-        } catch (error) {
-          setLoadingCity(false);
-          console.log(error);
+          const response = await getForecastByCoords(latitude, longitude);
+          setPlace(response.city.name);
+        } catch (error: unknown) {
+          if (axios.isAxiosError(error) && error.response) {
+            setError(error.response.data?.message || "Failed to load your location weather.");
+          } else if (error instanceof Error) {
+            setError(error.message);
+          } else {
+            setError("An unexpected error occurred.");
+          }
         }
-
-      })
-    }
+      },
+      () => {
+        setError("Unable to retrieve your location. Check location permissions.");
+      }
+    );
 
   }
 
   function handleSubmitSearch(e: React.FormEvent<HTMLFormElement>) {
 
-    setLoadingCity(true);
     e.preventDefault();
 
     if (suggestions.length < 1) {
       setError("Location not found");
-      setLoadingCity(false);
     }
     else {
       setError("");
-      setTimeout(() => {
-        setPlace(city);
-        setShowSuggestion(false);
-        setLoadingCity(false);
-      }, 1000);
+      setPlace(city);
+      setShowSuggestion(false);
     }
 
   }
@@ -200,7 +192,7 @@ function SuggestionBox({
 }) {
   return (
     <>
-      {((showSuggestions && suggestions.length > 1) || error) && (
+      {((showSuggestions && suggestions.length >= 1) || error) && (
         <ul className='mb-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl text-white absolute top-[50px] left-0 min-w-[200px] flex flex-col gap-1 p-1 z-50'>
           {error && suggestions.length < 1 && (
             <li className='text-red-500 p-1'>{error}</li>
