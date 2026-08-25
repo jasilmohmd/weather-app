@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Searchbox from './Searchbox';
 import axios from 'axios';
 import { useAtom } from 'jotai';
@@ -21,7 +21,10 @@ export default function Navbar({ location, data }: Props) {
   //
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestion] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
   //
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const requestSeqRef = useRef(0);
   const [, setPlace] = useAtom(placeAtom);
   const [savedPlaces, setSavedPlaces] = useAtom(savedPlacesAtom);
   const [recentSearches, setRecentSearches] = useAtom(recentSearchesAtom);
@@ -47,37 +50,56 @@ export default function Navbar({ location, data }: Props) {
   }
 
 
-  async function handleInputChange(value: string) {
-    setCity(value);
-    if (value.length > 3) {
-      try {
-        const cities = await findCities(value);
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, []);
 
-        setSuggestions(cities.map((item: City) => item.name));
-        setError("");
-        setShowSuggestion(true);
+  async function fetchSuggestions(value: string) {
+    const seq = ++requestSeqRef.current;
+    try {
+      const cities = await findCities(value);
+      if (seq !== requestSeqRef.current) return;
 
-      } catch (error:unknown) {
-        if (axios.isAxiosError(error) && error.response) {
-          setError(error.response.data?.message || "Failed to fetch suggestions.");
-        } else if (error instanceof Error) {
-          setError(error.message);
-        } else {
-          setError("An unexpected error occurred.");
-        }
-        setSuggestions([]);
-        setShowSuggestion(false);
+      setSuggestions(cities.map((item: City) => item.name));
+      setError("");
+      setShowSuggestion(true);
+      setActiveIndex(-1);
+
+    } catch (error: unknown) {
+      if (seq !== requestSeqRef.current) return;
+      if (axios.isAxiosError(error) && error.response) {
+        setError(error.response.data?.message || "Failed to fetch suggestions.");
+      } else if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("An unexpected error occurred.");
       }
-    }
-    else {
       setSuggestions([]);
       setShowSuggestion(false);
+    }
+  }
+
+  function handleInputChange(value: string) {
+    setCity(value);
+    setActiveIndex(-1);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (value.length > 3) {
+      debounceRef.current = setTimeout(() => { void fetchSuggestions(value); }, 300);
+    }
+    else {
+      requestSeqRef.current++;
+      setSuggestions([]);
+      setShowSuggestion(false);
+      setError("");
     }
   }
 
   function handleSuggestionClick(value: string) {
     setCity(value);
     setShowSuggestion(false);
+    setActiveIndex(-1);
   }
 
   function handleCurrentLocation() {
@@ -126,6 +148,33 @@ export default function Navbar({ location, data }: Props) {
 
   }
 
+  function handleSearchKeyDown(e: React.KeyboardEvent) {
+    if (!showSuggestions || suggestions.length < 1) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveIndex((i) => (i + 1) % suggestions.length);
+    }
+    else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveIndex((i) => (i <= 0 ? suggestions.length - 1 : i - 1));
+    }
+    else if (e.key === "Enter" && activeIndex >= 0) {
+      e.preventDefault();
+      const item = suggestions[activeIndex];
+      if (item) {
+        setCity(item);
+        selectPlace(item);
+        setShowSuggestion(false);
+        setActiveIndex(-1);
+      }
+    }
+    else if (e.key === "Escape") {
+      setShowSuggestion(false);
+      setActiveIndex(-1);
+    }
+  }
+
   return (
 
     <>
@@ -134,7 +183,12 @@ export default function Navbar({ location, data }: Props) {
 
           <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-between gap-16">
 
-            <button className="p-2 hover:bg-white/10 rounded-full transition-colors duration-200" onClick={handleCurrentLocation} title='Your Current Location'>
+            <button
+              className="p-2 hover:bg-white/10 rounded-full transition-colors duration-200"
+              onClick={handleCurrentLocation}
+              aria-label="Use my current location"
+              title='Your Current Location'
+            >
               <MapPin className="w-6 h-6 text-white/80" />
             </button>
 
@@ -146,6 +200,8 @@ export default function Navbar({ location, data }: Props) {
             </div>
             <button
               onClick={() => setIsCelsius(!isCelsius)}
+              aria-label={`Switch to degrees ${isCelsius ? 'Fahrenheit' : 'Celsius'}`}
+              title={`Switch to °${isCelsius ? 'F' : 'C'}`}
               className="text-white/80 font-light text-sm px-2 py-1 hover:bg-white/10 rounded-full transition-colors duration-200"
             >
               °{isCelsius ? 'C' : 'F'}
@@ -178,7 +234,7 @@ export default function Navbar({ location, data }: Props) {
           {/*  */}
           <section className="ml-auto flex gap-2 items-center">
 
-            <div className='relative hidden md:flex'>
+            <div className='relative hidden md:flex' onKeyDown={handleSearchKeyDown}>
               {/* Search box */}
               <Searchbox
                 value={city}
@@ -190,7 +246,8 @@ export default function Navbar({ location, data }: Props) {
                   showSuggestions,
                   suggestions,
                   handleSuggestionClick,
-                  error
+                  error,
+                  activeIndex
                 }}
               />
             </div>
@@ -201,7 +258,7 @@ export default function Navbar({ location, data }: Props) {
       </nav>
 
       <section className='flex max-w-7xl px-3 md:hidden justify-center'>
-        <div className='relative'>
+        <div className='relative' onKeyDown={handleSearchKeyDown}>
           {/* Search box */}
           <Searchbox
             value={city}
@@ -213,7 +270,8 @@ export default function Navbar({ location, data }: Props) {
               showSuggestions,
               suggestions,
               handleSuggestionClick,
-              error
+              error,
+              activeIndex
             }}
           />
         </div>
@@ -229,27 +287,37 @@ function SuggestionBox({
   showSuggestions,
   suggestions,
   handleSuggestionClick,
-  error
+  error,
+  activeIndex
 }: {
   showSuggestions: boolean;
   suggestions: string[];
   handleSuggestionClick: (item: string) => void;
   error: string;
+  activeIndex: number;
 }) {
   return (
     <>
       {((showSuggestions && suggestions.length >= 1) || error) && (
-        <ul className='mb-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl text-white absolute top-[50px] left-0 min-w-[200px] flex flex-col gap-1 p-1 z-50'>
+        <ul
+          role="listbox"
+          aria-label="City suggestions"
+          className='mb-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl text-white absolute top-[50px] left-0 min-w-[200px] flex flex-col gap-1 p-1 z-50'
+        >
           {error && suggestions.length < 1 && (
-            <li className='text-red-500 p-1'>{error}</li>
+            <li role="alert" className='text-red-500 p-1'>{error}</li>
           )}
           {suggestions.map((item, i) => (
-            <li
-              key={i}
-              onClick={() => handleSuggestionClick(item)}
-              className='cursor-pointer p-2 hover:bg-gray-200/20 rounded-xl'
-            >
-              {item}
+            <li key={`${item}-${i}`} role="option" aria-selected={i === activeIndex}>
+              <button
+                type="button"
+                onClick={() => handleSuggestionClick(item)}
+                className={`w-full text-left cursor-pointer p-2 rounded-xl transition-colors ${
+                  i === activeIndex ? 'bg-gray-200/20' : 'hover:bg-gray-200/20'
+                }`}
+              >
+                {item}
+              </button>
             </li>
           ))}
         </ul>

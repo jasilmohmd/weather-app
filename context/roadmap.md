@@ -19,13 +19,15 @@ After #1, #2 and #3 are independent of each other — pick by preference. #4 las
 
 Add a spec via [`TEMPLATE.md`](./features/TEMPLATE.md) before starting any of these:
 
-- Debounced autocomplete + keyboard-navigable suggestions (A6, ♿ items)
+- ~~Debounced autocomplete + keyboard-navigable suggestions~~ ✅ done — [`features/search-a11y.md`](./features/search-a11y.md)
+- Full ARIA combobox wiring on the search input (aria-expanded/activedescendant) — follow-up to search-a11y
 - Route-handler proxy hiding the OWM key server-side (S2)
 - Hourly forecast expansion (24h+ with scroll snap)
 - i18n (date-fns locales already in tree)
 - PWA manifest + offline shell
 - Test suite (Vitest + React Testing Library)
 - Adopt OWM PNG icons or keep emojis — decide once (T6)
+- Code-split recharts via next/dynamic (~100 kB off the page chunk)
 
 ## Changelog
 
@@ -37,3 +39,4 @@ Add a spec via [`TEMPLATE.md`](./features/TEMPLATE.md) before starting any of th
 | 2026-08-25 | `feat/favorites-recent-cities`: spec #2 implemented — persisted saved/recent places, chips bar, pin button; branching rule added to agent protocol |
 | 2026-08-25 | `feat/dark-light-mode`: spec #3 implemented — class-based dark variant, per-condition gradients (light+dark), theme cycle button, FOUC script, persisted theme/units |
 | 2026-08-25 | `feat/aqi-weather-maps`: spec #4 implemented — AQI tile (Air Pollution API), recharts temp/precip trends, collapsible Windy radar embed |
+| 2026-08-25 | `feat/search-debounce-keyboard`: backlog item — 300 ms debounced autocomplete with stale guard, keyboard-accessible suggestions, a11y labels batch |

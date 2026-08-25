@@ -1,6 +1,6 @@
 # Known Issues & Tech Debt
 
-> **2026-08-25 refactor update:** items B1–B5, A1–A5, T1–T4 and the source half of S1 were fixed on branch `refactor/foundation`. Entries below are kept for reference; headings marked ✅ are resolved. Still open: A6, S2, T5–T9, ♿ batch.
+> **2026-08-25 refactor update:** items B1–B5, A1–A5, T1–T4 and the source half of S1 were fixed on branch `refactor/foundation`; A6 and the ♿ accessibility batch on `feat/search-debounce-keyboard`. Entries below are kept for reference; headings marked ✅ are resolved. Still open: S2, T5–T9.
 
 Review date: 2026-08-25 @ commit `0f97960`. Line numbers refer to current source. Fix owners: any agent touching the relevant file should fix-and-check-off items marked 🔧; structural items are bundled into [`features/refactor-foundation.md`](./features/refactor-foundation.md).
 
@@ -53,9 +53,6 @@ const [queryClient] = useState(() => new QueryClient())
 ### A5 ⚠️ Unstyled raw error string
 `src/app/page.tsx:144` returns `'An error has occurred: ' + error.message`. Replace with a styled error card; ideally add `app/error.tsx` boundary (refactor R9).
 
-### A6 ⚠️ Autocomplete fires per keystroke
-No debounce on `handleInputChange` (`Navbar.tsx:29-59`) → burns OWM rate limit while typing. Debounce ~300ms when touching search.
-
 ## Security
 
 ### S1 🔒 API key hardcoded in source comment
@@ -96,9 +93,13 @@ No debounce on `handleInputChange` (`Navbar.tsx:29-59`) → burns OWM rate limit
 ### T9 🧹 No tests / no error boundary / no Prettier
 Zero test files or runner. No `error.tsx`/`not-found.tsx`/`loading.tsx`. No formatter config (only stock ESLint). Adding Vitest + Testing Library is optional future work; error boundary is refactor R9.
 
-## Accessibility Gaps (batch item)
+### A6 ✅⚠️ Autocomplete fires per keystroke — FIXED
+300 ms debounce + stale-response sequence guard + unmount cleanup in `Navbar.tsx`. See `features/search-a11y.md`.
 
-- ♿ Suggestion `<li>`s have onClick but no keyboard support/roles (`Navbar.tsx:208-216`) — needs button semantics or roving tabindex + Enter/Escape/arrows.
-- ♿ Icon-only buttons rely on `title` alone (geolocation `Navbar.tsx:122`, unit toggle `:132-137`, search submit `Searchbox.tsx:29`) → add `aria-label`.
-- ♿ Search input lacks a label (`Searchbox.tsx:21-27`) → `aria-label="Search location"`.
-- ♿ Emoji weather icons convey meaning without text alternative (`WeatherIcon.tsx`) → `role="img"` + `aria-label={condition}`.
+## Accessibility Gaps — FIXED (feat/search-debounce-keyboard)
+
+- ♿ ✅ Suggestions are `role="listbox"`/`role="option"` buttons with ↑/↓/Enter/Escape keyboard support.
+- ♿ ✅ All icon-only buttons carry aria-labels (geolocation, unit toggle, pin, theme, chips, search submit).
+- ♿ ✅ Search input has `aria-label="Search location"`.
+- ♿ ✅ Weather icons are `role="img"` with readable condition names per OWM code (`ICON_NAMES` in WeatherIcon.tsx).
+- Future polish: full ARIA combobox wiring (`aria-expanded`/`aria-activedescendant` on the input).

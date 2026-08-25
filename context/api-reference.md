@@ -42,7 +42,7 @@ GET /data/2.5/find?q={partialName}&appid={KEY}
 ```
 - Called by: `findCities()` service from Navbar `handleInputChange()` when input length > 3
 - Only `response.data.list[].name` is used (mapped through the shared `City` type imported from `@/app/page`)
-- Debouncing: none — fires per keystroke past 3 chars
+- Debouncing: 300 ms with stale-response sequence guard (`feat/search-debounce-keyboard`) — keep this pattern when touching search
 
 ### 3. Forecast by coordinates (geolocation flow)
 
