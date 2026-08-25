@@ -10,6 +10,7 @@ import PlacesBar from "@/components/PlacesBar";
 import WeatherSkeleton from "@/components/WeatherSkeleton";
 import { isCelsiusAtom, placeAtom } from "./atom";
 import { useWeather } from "@/hooks/useWeather";
+import { getWeatherGradient } from "@/utils/getWeatherGradient";
 import { useAtom } from "jotai";
 
 export default function Home() {
@@ -20,7 +21,7 @@ export default function Home() {
 
   if (isPending) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-300 via-orange-400 to-red-400">
+      <div className={`min-h-screen bg-gradient-to-br transition-all duration-500 ${getWeatherGradient(place)}`}>
         <WeatherSkeleton />
       </div>
     );
@@ -28,7 +29,7 @@ export default function Home() {
 
   if (error || !data) {
     return (
-      <div className="flex min-h-screen items-center justify-center px-4 bg-gradient-to-br from-amber-300 via-orange-400 to-red-400">
+      <div className={`flex min-h-screen items-center justify-center px-4 bg-gradient-to-br transition-all duration-500 ${getWeatherGradient()}`}>
         <Container className="max-w-md p-8 text-center space-y-2">
           <p className="text-white text-lg font-light">Could not load the forecast</p>
           <p className="text-white/70 text-sm font-light break-words">
@@ -43,7 +44,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-amber-300 via-orange-400 to-red-400 transition-all duration-500">
+    <div className={`flex flex-col min-h-screen bg-gradient-to-br transition-all duration-500 ${getWeatherGradient(data.list[0]?.weather[0].main)}`}>
 
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">

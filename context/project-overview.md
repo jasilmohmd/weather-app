@@ -52,8 +52,8 @@ weather-app/
     │   ├── layout.tsx            # SERVER component: Geist fonts + metadata + <Providers>
     │   ├── providers.tsx         # 'use client': QueryClientProvider (useState-created client)
     │   ├── page.tsx              # thin composition root (~80 lines): useWeather → sections
-    │   ├── atom.ts               # placeAtom, isCelsiusAtom, savedPlacesAtom*, recentSearchesAtom*
-    │   │                         #    (* persisted via jotai atomWithStorage → localStorage)
+    │   ├── atom.ts               # placeAtom, isCelsiusAtom💾, savedPlacesAtom💾, recentSearchesAtom💾, themeAtom💾
+    │   │                         #    (💾 = persisted via jotai atomWithStorage → localStorage)
     │   └── favicon.ico
     ├── components/               # all default-exported PascalCase .tsx
     │   ├── Container.tsx         # glass-card wrapper (bg-white/10 backdrop-blur-3xl …)
@@ -66,6 +66,7 @@ weather-app/
     │   │                         #    desktop+mobile Searchbox, internal SuggestionBox
     │   ├── PlacesBar.tsx         # saved + recent city chips (localStorage-persisted)
     │   ├── Searchbox.tsx         # controlled form input + submit icon (uses cn())
+    │   ├── ThemeSync.tsx         # keeps .dark class on <html> in sync with themeAtom + OS
     │   ├── WeatherDetails.tsx    # 6 detail tiles; also named-export CompactWeatherDetails
     │   ├── WeatherIcon.tsx       # OWM icon-code → emoji map, ☀️ fallback
     │   └── WeatherSkeleton.tsx   # full-page loading skeleton
@@ -79,6 +80,7 @@ weather-app/
         ├── cn.ts                 # clsx + tailwind-merge
         ├── convertKelvinToCelcius.ts  # convertKtoC / convertKtoF (both Math.round now)
         ├── getDayOrNightIcon.tsx # swaps trailing d/n based on 06–18h window
+        ├── getWeatherGradient.ts # OWM condition → gradient stops (literal light+dark: classes)
         ├── metersToKilometers.ts # m → km string (toFixed(0))
         ├── recentSearches.ts     # pushRecent/removePlace + MAX_RECENT_SEARCHES/MAX_SAVED_PLACES
         ├── safeFormat.ts         # safeFormat(dateStr, fmt) / safeFormatUnix(unix, fmt) → "N/A"
@@ -102,7 +104,8 @@ weather-app/
 - Only setting: `images.remotePatterns` whitelisting `https://openweathermap.org/**` — prepared for OWM icon images that are NOT used yet (app uses emojis instead)
 
 ### `globals.css`
-- Contains exactly `@import "tailwindcss";` — Tailwind v4 CSS-first style. Theme tokens/dark variants would be defined here via `@theme` (see dark-mode spec).
+- `@import "tailwindcss"` + `@custom-variant dark (&:where(.dark, .dark *))` — dark mode is CLASS-based (`<html class="dark">`), not media-based. Theme tokens would also live here if introduced later.
+- Helper classes `.scrollbar-hide`, `.pb-safe`.
 
 ## Git Context
 

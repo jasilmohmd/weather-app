@@ -4,11 +4,13 @@
 
 | Field | Value |
 |---|---|
-| Status | planned |
+| Status | **done** (branch `feat/dark-light-mode`) |
 | Priority | P1 |
 | Depends on | [refactor-foundation.md](./refactor-foundation.md) recommended — especially resolving B2 (dead gradient ternary at `page.tsx:147`) which this spec replaces |
-| Resolves | T4 partially (metadata), ♿ contrast improvements |
-| New dependencies | none required (optional: `next-themes` if class-strategy edge cases annoy; vanilla approach documented here) |
+| Resolves | T4 fully, B2 properly |
+| New dependencies | none |
+
+> **Implementation notes (2026-08-25):** Tailwind v4 class strategy via `@custom-variant dark` in globals.css. Gradients live in `src/utils/getWeatherGradient.ts` — every class is a **literal string** (incl. its `dark:` twin) because Tailwind's compiler can't see dynamically-built names; verified emitted classes in built CSS. Theme applied pre-paint by an inline script in layout (`weather.theme`, JSON-encoded); `ThemeSync` keeps `.dark` on `<html>` in sync and live-follows OS changes while mode = system. Navbar cycles Sun→Moon→Monitor (light→dark→system). Skeleton uses the current city's condition gradient; error card uses Clear default. Glass surfaces/text needed no overrides (white-alpha works on both). Contrast note: lightest gradient stops stay ≥ sky-200/sky-300 tier matching the original amber-300 baseline for white text.
 
 ## Summary
 

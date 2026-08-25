@@ -38,11 +38,12 @@ Former anti-patterns (refetch-via-useEffect, artificial delays) are gone as of `
 | Atom | Type | Default | Writers | Readers |
 |---|---|---|---|---|
 | `placeAtom` | `string` | `"Delhi"` | `Navbar` (`selectPlace`) | `page.tsx` |
-| `isCelsiusAtom` | `boolean` | `true` | `Navbar` (`setIsCelsius`) | `page.tsx` → props |
+| `isCelsiusAtom` 💾 | `boolean` | `true` | Navbar toggle | page → props |
 | `savedPlacesAtom` 💾 | `string[]` | `[]` | Navbar pin toggle, PlacesBar remove | Navbar, PlacesBar |
 | `recentSearchesAtom` 💾 | `string[]` | `[]` | Navbar (`selectPlace`), PlacesBar remove | PlacesBar |
+| `themeAtom` 💾 | `"light"\|"dark"\|"system"` | `"system"` | Navbar cycle button | ThemeSync, layout init script |
 
-💾 = persisted to localStorage via `atomWithStorage` (keys `weather.savedPlaces`, `weather.recentSearches`; caps 10/5 in `utils/recentSearches.ts`). `isCelsius` persistence is planned for the dark-mode spec.
+💾 = persisted to localStorage via `atomWithStorage` (keys `weather.isCelsius`, `weather.savedPlaces`, `weather.recentSearches`, `weather.theme`; caps 10/5 for places in `utils/recentSearches.ts`). `isCelsius` persistence is planned for the dark-mode spec.
 
 ### TanStack Query
 
@@ -87,9 +88,11 @@ RootLayout (layout.tsx — SERVER component, exports metadata)
 
 ## Styling System
 
-- **Tailwind v4 utility classes inline everywhere.** No component CSS files except two styled-jsx blocks.
+- **Tailwind v4 utility classes inline everywhere.** No component CSS files; shared helpers (`.scrollbar-hide`, `.pb-safe`) live in `globals.css`.
+- **Dark mode is class-based:** `@custom-variant dark` in globals.css + `.dark` on `<html>` (applied pre-paint by inline script in layout, kept in sync by `ThemeSync.tsx`). Use `dark:` variants freely.
+- Page background gradient is condition-aware via `getWeatherGradient()` (`utils/getWeatherGradient.ts`). ⚠️ All classes there are literal strings — Tailwind can't see dynamically-built class names; add new conditions as full literals.
 - Signature glass card recipe (also baked into `Container.tsx`): `bg-white/10 backdrop-blur-3xl border border-white/20 rounded-3xl shadow-2xl`
-- Page background: orange gradient `bg-gradient-to-br from-amber-300 via-orange-400 to-red-400` + two animated blurred white orbs (`animate-pulse blur-3xl bg-white/5`)
+- Page background: condition-aware gradient (see `getWeatherGradient`) + two animated blurred white orbs (`animate-pulse blur-3xl bg-white/5`)
 - Text hierarchy: white with opacity steps — `text-white`, `/90`, `/80`, `/70`, `/60`, `/50`, `/40`, `/30`; weights `font-light`/`font-extralight`
 - Fonts: Geist Sans/Mono via `next/font/google` CSS variables in layout
 - Helper classes `.scrollbar-hide` and `.pb-safe` defined twice via styled-jsx (`page.tsx:299-310` and `:441-452`)

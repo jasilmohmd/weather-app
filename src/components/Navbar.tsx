@@ -5,11 +5,12 @@ import Searchbox from './Searchbox';
 import axios from 'axios';
 import { useAtom } from 'jotai';
 import { isCelsiusAtom, placeAtom, recentSearchesAtom, savedPlacesAtom } from '@/app/atom';
-import { MapPin, Star } from 'lucide-react';
+import { MapPin, Star, Sun, Moon, Monitor } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { City, WeatherEntry } from '@/types/weather';
 import { findCities, getForecastByCoords } from '@/services/weatherApi';
 import { MAX_SAVED_PLACES, pushRecent, removePlace } from '@/utils/recentSearches';
+import { Theme, themeAtom } from '@/app/atom';
 
 type Props = { location?: string, data?: WeatherEntry }
 
@@ -25,6 +26,9 @@ export default function Navbar({ location, data }: Props) {
   const [savedPlaces, setSavedPlaces] = useAtom(savedPlacesAtom);
   const [recentSearches, setRecentSearches] = useAtom(recentSearchesAtom);
   const [isCelsius, setIsCelsius] = useAtom(isCelsiusAtom);
+  const [theme, setTheme] = useAtom(themeAtom);
+
+  const nextTheme: Theme = theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light';
 
   const isPinned = location ? savedPlaces.includes(location) : false;
 
@@ -155,6 +159,19 @@ export default function Navbar({ location, data }: Props) {
               className="p-2 hover:bg-white/10 rounded-full transition-colors duration-200 disabled:opacity-40"
             >
               <Star className="w-5 h-5 text-white/80" fill={isPinned ? 'currentColor' : 'none'} />
+            </button>
+
+            <button
+              onClick={() => setTheme(nextTheme)}
+              aria-label={`Theme: ${theme}. Switch to ${nextTheme}`}
+              title={`Theme: ${theme}`}
+              className="p-2 hover:bg-white/10 rounded-full transition-colors duration-200"
+            >
+              {theme === 'light'
+                ? <Sun className="w-5 h-5 text-white/80" />
+                : theme === 'dark'
+                  ? <Moon className="w-5 h-5 text-white/80" />
+                  : <Monitor className="w-5 h-5 text-white/80" />}
             </button>
           </div>
 
