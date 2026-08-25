@@ -19,8 +19,6 @@ import React from 'react';
 import Footer from "@/components/Footer";
 import { safeFormat, safeFormatUnix } from "@/utils/safeFormat";
 
-// https://api.openweathermap.org/data/2.5/forecast?q=pune&appid=7caaebc1b01f226342be04bbee229a65&cnt=2
-
 export interface WeatherResponse {
   cod: string;
   message: number;
