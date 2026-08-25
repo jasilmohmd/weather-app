@@ -56,26 +56,30 @@ weather-app/
     │   │                         #    (💾 = persisted via jotai atomWithStorage → localStorage)
     │   └── favicon.ico
     ├── components/               # all default-exported PascalCase .tsx
+    │   ├── AqiTile.tsx           # AQI 1–5 badge + dominant pollutant (hides on error)
     │   ├── Container.tsx         # glass-card wrapper (bg-white/10 backdrop-blur-3xl …)
-    │   ├── CurrentWeatherHero.tsx      # hero card + 6-tile WeatherDetails grid
+    │   ├── CurrentWeatherHero.tsx      # hero card + AQI tile + 6-tile WeatherDetails grid
     │   ├── DailyForecast.tsx           # date-dedupe + first-entry-≥6am logic + "Next 5 Days"
+    │   ├── ForecastCharts.tsx          # recharts: temperature line + precipitation bars
     │   ├── Footer.tsx            # static credits card
     │   ├── ForecastWeatherDetails.tsx  # one row of daily forecast + compact details grid
     │   ├── HourlyForecast.tsx          # first 12 slots, horizontal scroll
     │   ├── Navbar.tsx            # location/date, geolocation btn, unit toggle, pin-city star,
     │   │                         #    desktop+mobile Searchbox, internal SuggestionBox
     │   ├── PlacesBar.tsx         # saved + recent city chips (localStorage-persisted)
+    │   ├── RadarMap.tsx          # collapsible Windy radar iframe (loads only when opened)
     │   ├── Searchbox.tsx         # controlled form input + submit icon (uses cn())
     │   ├── ThemeSync.tsx         # keeps .dark class on <html> in sync with themeAtom + OS
     │   ├── WeatherDetails.tsx    # 6 detail tiles; also named-export CompactWeatherDetails
     │   ├── WeatherIcon.tsx       # OWM icon-code → emoji map, ☀️ fallback
     │   └── WeatherSkeleton.tsx   # full-page loading skeleton
     ├── hooks/
+    │   ├── useAqi.ts             # useQuery(["weather","aqi",lat,lon]) — enabled only with coords
     │   └── useWeather.ts         # useQuery(["weather","forecast",place]) wrapper
     ├── services/
-    │   └── weatherApi.ts         # axios instance + getForecastByCity/getForecastByCoords/findCities
+    │   └── weatherApi.ts         # axios instance + getForecastByCity/getForecastByCoords/findCities/getAirPollution
     ├── types/
-    │   └── weather.ts            # all OWM response interfaces (single source)
+    │   └── weather.ts            # all OWM response interfaces incl. AirPollutionResponse
     └── utils/                    # camelCase plain-function modules
         ├── cn.ts                 # clsx + tailwind-merge
         ├── convertKelvinToCelcius.ts  # convertKtoC / convertKtoF (both Math.round now)

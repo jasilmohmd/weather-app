@@ -73,10 +73,13 @@ RootLayout (layout.tsx — SERVER component, exports metadata)
             ├── main
             │   ├── CurrentWeatherHero { data: WeatherEntry; city: City; isCelsius }
             │   │   ├── hero card (WeatherIcon, big temp, description, feels-like, H/L)
+            │   │   ├── AqiTile { lat; lon } — self-contained useAqi, hides on error
             │   │   └── WeatherDetails { visibility; humidity; windSpeed; airPressure; sunrise; sunset }  ← pre-formatted strings
             │   │       └── internal SingleWeatherDetail { icon: React.ElementType; label; value; unit? }
             │   ├── HourlyForecast { list: WeatherEntry[]; isCelsius }    — slices first 12 internally
+            │   ├── ForecastCharts { list; isCelsius }                    — recharts temp line + precip bars
             │   ├── DailyForecast { list; city; isCelsius }               — date-dedupe + ≥6am rule + slice(1,6) internally
+            │   ├── RadarMap { lat; lon }                                 — collapsed; iframe mounts only when opened
             │   │   └── ForecastWeatherDetails extends WeatherDetailProps {
             │   │         weatherIcon; date; day; temp; feels_like; temp_min; temp_max; description; isCelsius }
             │   │       └── named export CompactWeatherDetails (4-tile row)

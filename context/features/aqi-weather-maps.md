@@ -4,11 +4,13 @@
 
 | Field | Value |
 |---|---|
-| Status | planned |
+| Status | **done** (branch `feat/aqi-weather-maps`) |
 | Priority | P2 |
 | Depends on | [refactor-foundation.md](./refactor-foundation.md) **required** (service layer + types + hook patterns) |
 | Resolves | — |
-| New dependencies | `recharts@^2` (charts). Radar uses RainViewer public tiles (no key) OR Windy embed iframe (no key) — decide in step 1 |
+| New dependencies | `recharts@^2.15` (React 19 compatible line of v2) |
+
+> **Implementation notes (2026-08-25):** Radar uses a **conditionally-mounted Windy iframe** (`open ? <iframe/> : null`) instead of next/dynamic — conditional mount already guarantees zero network until expanded, which is simpler than dynamic import. AQI tile is mounted inside `CurrentWeatherHero` (between hero card and details grid); it renders a pulse skeleton while pending and hides itself entirely on error/empty (non-critical data). Charts show the FULL forecast window with auto-thinned x labels (`minTickGap`), animations off to avoid layout churn. Bundle note: recharts adds ~100 kB to the page chunk — if it matters later, code-split via `next/dynamic` on ForecastCharts/RadarMap.
 
 ## Summary
 

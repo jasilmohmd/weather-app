@@ -3,10 +3,12 @@
 import Container from "@/components/Container";
 import CurrentWeatherHero from "@/components/CurrentWeatherHero";
 import DailyForecast from "@/components/DailyForecast";
+import ForecastCharts from "@/components/ForecastCharts";
 import Footer from "@/components/Footer";
 import HourlyForecast from "@/components/HourlyForecast";
 import Navbar from "@/components/Navbar";
 import PlacesBar from "@/components/PlacesBar";
+import RadarMap from "@/components/RadarMap";
 import WeatherSkeleton from "@/components/WeatherSkeleton";
 import { isCelsiusAtom, placeAtom } from "./atom";
 import { useWeather } from "@/hooks/useWeather";
@@ -64,7 +66,11 @@ export default function Home() {
 
         <HourlyForecast list={data.list} isCelsius={isCelsius} />
 
+        <ForecastCharts list={data.list} isCelsius={isCelsius} />
+
         <DailyForecast list={data.list} city={data.city} isCelsius={isCelsius} />
+
+        <RadarMap lat={data.city.coord.lat} lon={data.city.coord.lon} />
 
         {/* Bottom safe area */}
         <div className="h-8"></div>

@@ -1,3 +1,4 @@
+import AqiTile from "./AqiTile";
 import WeatherIcon from "./WeatherIcon";
 import WeatherDetails from "./WeatherDetails";
 import { convertKtoC, convertKtoF } from "@/utils/convertKelvinToCelcius";
@@ -61,6 +62,8 @@ export default function CurrentWeatherHero({ data, city, isCelsius }: CurrentWea
           </div>
         </div>
       </div>
+
+      <AqiTile lat={city?.coord.lat} lon={city?.coord.lon} />
 
       <div className="grid grid-cols-2 gap-4 pb-safe">
 

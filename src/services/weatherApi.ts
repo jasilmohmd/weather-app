@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { City, WeatherResponse } from "@/types/weather";
+import type { AirPollutionResponse, City, WeatherResponse } from "@/types/weather";
 
 const http = axios.create({
   baseURL: "https://api.openweathermap.org/data/2.5",
@@ -32,4 +32,11 @@ export async function findCities(query: string): Promise<City[]> {
     params: { q: query, appid: apiKey() },
   });
   return (data?.list ?? []) as City[];
+}
+
+export async function getAirPollution(lat: number, lon: number): Promise<AirPollutionResponse> {
+  const { data } = await http.get<AirPollutionResponse>("/air_pollution", {
+    params: { lat, lon, appid: apiKey() },
+  });
+  return data;
 }
